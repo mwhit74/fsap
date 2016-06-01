@@ -69,6 +69,18 @@ def loop(xy_coords, func):
 		cur_y = next_y
 	
 	return var
+
+def graham_scan(xy_coords):
+	x = xy_coords[0][0]
+	y = xy_coords[0][1]
+
+	for xy in xy_coords:
+		if xy[1] < y:
+			y = xy[1]
+			x = xy[0]
+		if xy[1] = y and xy[0] < x:
+			y = xy[1]
+			x = xy[0]
 	
 if __name__ == "__main__":
 	#xy_coords = [[0.0,0.0],[2.0,0.0],[2.0,2.0],[0.0,2.0],[0.0,0.0]] #rectangle
