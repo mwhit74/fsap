@@ -96,9 +96,8 @@ class SectionProperty:
 
 	
 if __name__ == "__main__":
-	#xy_coords = [[0.0,0.0],[2.0,0.0],[2.0,2.0],[0.0,2.0],[0.0,0.0]] #rectangle
+	xy_coords = [[0.0,0.0],[2.0,0.0],[2.0,2.0],[0.0,2.0],[0.0,0.0]] #rectangle
 	#xy_coords = [[0,0],[2,0],[1,2],[0,0]] #triangle
-	xy_coords = [[0.0,0.0],[7.0,0.0],[8.26,3.5],[0.0, 3.5],[0.0,0.0]]
 	
 	print "Area: " + str(area(xy_coords))
 	print "ENA in x: " + str(ENA_x(xy_coords))
