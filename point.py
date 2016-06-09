@@ -32,7 +32,7 @@ class XYPoint:
         return (self.x,self.y)
 
 class XYZPoint:
-    """Class to represent a point in 3D space."
+    """Class to represent a point in 3D space."""
 
     def __init__(self,x,y,z):
         """Initialize the class arguments x, y, and z.
