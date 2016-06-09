@@ -2,17 +2,6 @@
 XY and XYZ point classes. 
 """
 
-__author__ = "MLW"
-__copyright__ = ""
-__credits__ = ["MLW"]
-
-__license__ = ""
-__version__ = "1.0"
-__maintainer__ = "MLW"
-__email__ = "mwhit74@gmail.com"
-__status__ = "Development"
-
-
 class XYPoint:
     """Class to represent a point in 2D space."""
 
