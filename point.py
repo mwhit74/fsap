@@ -6,7 +6,7 @@ class XYPoint:
     """Class to represent a point in 2D space."""
 
     def __init__(self,x,y):
-        """Initialize the class arguments x and y
+        """Initialize the class arguments x and y.
 
         Args:
             x (float): x-coordinate
@@ -15,6 +15,10 @@ class XYPoint:
         
         self.x = x
         self.y = y
+
+    def __str__(self):
+        """String representation of a 2D point."""
+        return "({0:.3f}, {1:.3f})".format(self.x,self.y)
 
     def coord(self):
         """Returns a tuple of x and y coordinates."""
@@ -35,6 +39,10 @@ class XYZPoint:
         self.x = x
         self.y = y
         self.z = z
+
+    def __str__(self):
+        """String representation of a 3D point."""
+        return "({0:.3f}, {1:.3f}, {2:.3f})".format(self.x, self.y, self.z)
 
     def coord(self):
         """Returns a tuple of x, y, and z coordinates."""
