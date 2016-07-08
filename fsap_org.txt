@@ -2,22 +2,24 @@
     /utils
         point.py (2D and 3D)
         line.py
-        plane.py
-        volume.py
+        {plane.py}
+        {volume.py}
         vector.py
+        unit_conversion.py
     /geometry
         node.py
         member.py
-        thin_plate.py
-        thick_plate.py
+        {thin_plate.py}
+        {thick_plate.py}
     /input (parsing input)
+        user_input_verification
     /material
         matl_base.py
         matl_user_defined.py
         matl_steel.py
         matl_concrete.py
     /section_property
-        sp_generic.py
+        sp_base.py
         sp_rectangle.py
         sp_circle.py
         sp_i_shape.py
