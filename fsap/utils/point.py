@@ -2,7 +2,7 @@
 2D and 3D point classes. 
 """
 
-class 2DPoint:
+class TwoDPoint:
     """Class to represent a point in 2D space."""
 
     def __init__(self,x,y):
@@ -24,7 +24,7 @@ class 2DPoint:
         """Returns a tuple of x and y coordinates."""
         return (self.x,self.y)
 
-class 3DPoint:
+class ThreeDPoint:
     """Class to represent a point in 3D space."""
 
     def __init__(self,x,y,z):
