@@ -18,7 +18,7 @@ class TwoDPoint:
 
     def __str__(self):
         """String representation of a 2D point."""
-        return "({0:.3f}, {1:.3f})".format(self.x,self.y)
+        return "{0:.3f} {1:.3f}".format(self.x,self.y)
 
     def coord(self):
         """Returns a tuple of x and y coordinates."""
@@ -42,7 +42,7 @@ class ThreeDPoint:
 
     def __str__(self):
         """String representation of a 3D point."""
-        return "({0:.3f}, {1:.3f}, {2:.3f})".format(self.x, self.y, self.z)
+        return "{0:.3f} {1:.3f} {2:.3f}".format(self.x, self.y, self.z)
 
     def coord(self):
         """Returns a tuple of x, y, and z coordinates."""
