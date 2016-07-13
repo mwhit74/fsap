@@ -1,6 +1,8 @@
 /fsap (free structural analysis package)
     /utils
         point.py (2D and 3D)
+            -documentation
+            -unit testing
         line.py
         {plane.py}
         {volume.py}
