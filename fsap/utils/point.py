@@ -2,6 +2,11 @@
 2D and 3D point classes. 
 """
 
+#Need to consider the implications of refactoring the class to a 3D point
+#Refactor class to 3D point only; set z as a named argument defaulting to 0
+
+#Polar coordinate coversion?
+
 class TwoDPoint:
     """Class to represent a point in 2D space."""
 
@@ -20,10 +25,10 @@ class TwoDPoint:
         """String representation of a 2D point."""
         return "{0:.3f} {1:.3f}".format(self.x,self.y)
 
-    def coord(self):
-        """Returns a tuple of x and y coordinates."""
+    def cartesian_coord(self):
+        """Returns a tuple of x and y cartesian coordinates."""
         return (self.x,self.y)
-
+    
 class ThreeDPoint:
     """Class to represent a point in 3D space."""
 
