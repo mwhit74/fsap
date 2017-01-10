@@ -7,6 +7,7 @@
         {plane.py}
         {volume.py}
         vector.py
+        matrix.py
         unit_conversion.py
     /geometry
         node.py
@@ -27,16 +28,16 @@
         sp_i_shape.py
     /analysis
         /truss
-            truss_k_matrix.py
+            axial_k_matrix.py
         /plane_frame
-            plane_frame_k_matrix.py
+            axial_1Dbending_k_matrix.py
         /space_frame
-            space_frame_k_matrix.py
+            axial_2Dbending_shear_torsion_k_matrix.py
     /load
         force.py
         load_point.py
         load_line.py
-        load_area.py
+        {load_area.py}
         load_moving.py
     /engine
         model.py
