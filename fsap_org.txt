@@ -1,17 +1,29 @@
+/ - directory
+* - subwork that has been completed
+{} - future
+% - reference/idea/thought
+ref - reference from another library
+
 /fsap (free structural analysis package)
     /utils
         point.py (2D and 3D)
-            -documentation
-            -unit testing
+            *documentation
+            *unit testing
         line.py
         {plane.py}
         {volume.py}
         vector.py
         matrix.py
         unit_conversion.py
+        ref naf/matrix_decomposition.py
+            %see Dr.Strang "Linear Alegbra and Its Applications"
     /geometry
         node.py
+            -point class
         member.py
+            -line class
+            -material class
+            -section_property class
         {thin_plate.py}
         {thick_plate.py}
     /input (parsing input)
@@ -23,25 +35,31 @@
         matl_concrete.py
     /section_property
         sp_base.py
+            %graham scan?
+            %also as separate module for independent use
         sp_rectangle.py
         sp_circle.py
         sp_i_shape.py
-    /analysis
+    /stiffness_matrix
         /truss
             axial_k_matrix.py
         /plane_frame
             axial_1Dbending_k_matrix.py
         /space_frame
             axial_2Dbending_shear_torsion_k_matrix.py
+                %for shear deformation see Cook Book
+        {/soil_spring}
+        {/user_defined}
     /load
         force.py
         load_point.py
         load_line.py
         {load_area.py}
-        load_moving.py
+        {load_moving.py}
     /engine
         model.py
-        matrix_inversion.py
+            %assemble global stiffness
+            %solve matrix (matrix decomposition)
     /output
 
         
