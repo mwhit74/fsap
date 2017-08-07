@@ -69,6 +69,8 @@ ref - reference from another library
         load_line class
         {load_area.py}
         {load_moving class}
+            %multi-step static - think mlob - load on structure>solve structure
+            %influence line/surface
     /structural analysis engine
         model.py
             %assemble global stiffness matrix
