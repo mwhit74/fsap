@@ -7,7 +7,7 @@
 
 #Polar coordinate coversion?
 
-class TwoDPoint:
+class Point2D:
     """Class to represent a point in 2D space."""
 
     def __init__(self,x,y):
@@ -29,7 +29,7 @@ class TwoDPoint:
         """Returns a tuple of x and y cartesian coordinates."""
         return (self.x,self.y)
     
-class ThreeDPoint:
+class Point3D:
     """Class to represent a point in 3D space."""
 
     def __init__(self,x,y,z):

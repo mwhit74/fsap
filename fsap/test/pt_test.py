@@ -1,9 +1,9 @@
 import unittest
 from fsap.utils import point as pt
 
-class TwoDPointTest(unittest.TestCase):
+class Point2DTest(unittest.TestCase):
     def setUp(self):
-        self.two_d_pt = pt.TwoDPoint(2.3, 4.5)
+        self.two_d_pt = pt.Point2D(2.3, 4.5)
 
     def tearDown(self):
         del(self.two_d_pt)
@@ -29,7 +29,7 @@ class TwoDPointTest(unittest.TestCase):
         self.assertEqual(self.two_d_pt.y, 5.9, 'Incorrect new y')
     
 
-class ThreeDPointTest(unittest.TestCase):
+class Point3DTest(unittest.TestCase):
     def setUp(self):
         self.three_d_pt = pt.ThreeDPoint(2.3, 4.5, 9.4)
 
