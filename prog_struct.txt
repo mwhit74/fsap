@@ -12,14 +12,24 @@ ref - reference from another library
         line.py
         {plane.py}
         {volume.py}
-        vector.py
-            %numpy?
-            %i know it's not my own stuff but it is good stuff
+        {vector.py}
         matrix.py
-            %numpy?
+            %i want to use numpy because it is really good stuff
+            %i also want to write my own stuff because i want to learn and i
+            want the code to be mine
         unit_conversion.py
+            %https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
+            %https://social.msdn.microsoft.com/Forums/en-US/f45acc04-c5b9-4c04-af42-1657ea3f6105/need-help-with-unit-conversion-class?forum=csharpgeneral
         matrix_inversion.py
-            %numpy?
+            %i want to use numpy because it is really good stuff
+            %i also want to write my own stuff because i want to learn and i
+            want the code to be mine
+            %is this ridiculous? absolutely?
+            %i am torn between quickly standing something up that works and
+            writing all the code to make it run
+            %i think the latter appeals to me more but it will take much much
+            longer
+            %mine also might be slower because numpy uses C libraries
         stress_tensor.py
         strain_tensor.py
     /geometry
