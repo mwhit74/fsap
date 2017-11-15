@@ -25,10 +25,16 @@ from math import sqrt
 class SectionProperty:
     """
     Elastic section property class
-
-
     """
     def __init__(self, points):
+        """Initialize section property class
+
+        Args:
+            points (list of tuples or list of Point2D): coordinate points
+            representing the outline of the polygon
+        Returns:
+            None
+        """
         if all(isinstance(points, Point2D):
             self.points = points
         else:
@@ -66,6 +72,7 @@ class SectionProperty:
         self.rmin = min(self.rx, self.ry)
 
     def convert_to_points(self):
+        """Converts list of tuples to list of Point2D"""
         points = []
         for pt in points:
             points.append(Point2D(pt[0], pt[1]))
@@ -73,6 +80,7 @@ class SectionProperty:
 
 
     def bounding_box(self):
+        """Finds the max and min x and y coordinates"""
         max_y = 0.0
         min_y = 0.0
         max_x = 0.0
@@ -91,10 +99,12 @@ class SectionProperty:
 
 
     def height(self):
+        """Calculates the height of the polygon"""
         return self.max_y - self.min_y
 
     
     def width(self):
+        """Calculates the width of the polygon"""
         return self.max_x - self.min_x
 
     #not sure if distance from centroid to extreme points will work correctly
@@ -102,34 +112,42 @@ class SectionProperty:
     #do these need to be with respect to the centoid of the section to the get
     #signs on the section modulus correct?
     def yt(self):
+        """Calculates the distance from ENA to extreme top fibre"""
         return self.max_y - self.ena_y
 
 
     def yb(self):
+        """Calculates the distance from ENA to extreme bottom fibre"""
         return self.eny_y - self.min_y
 
 
     def xr(self):
+        """Calculates the distance from ENA to extreme right fibre"""
         return self.max_x - self.ena_x
 
 
     def xl(self):
+        """Calculates the distance from ENA to extreme left fibre"""
         return self.ena_x - self.min_x
 
 
     def area(self):
+        """Calculates the area of the polygon"""
         return -1*self.loop(self.area_eq)
-           
+
 
     def area_eq(self, cur_x, cur_y, next_x, next_y):
+        """Equation used to calculate area of polygon"""
         return (next_y - cur_y)*(next_x + cur_x)/2.0
 
             
     def ena_x(self):
+        """Calculates elastic neutral axis in x-direction"""
         return -1.0/self.area*self.loop(self.ena_x_eq)
            
 
-    def ena_x_eq(self, cur_x, cur_y, next_x, next_y):
+    def ena_x_eq(self, cur_x, cur_ye, next_x, next_y):
+        """Equation use to calculate elastic neutral axis in x-direction"""
         return ((next_y - cur_y)/8.0)*((next_x + cur_x)**2.0 + (next_x - cur_x)**2.0/3.0)
             
 
