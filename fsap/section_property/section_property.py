@@ -25,6 +25,10 @@ from math import sqrt
 class SectionProperty:
     """
     Elastic section property class
+
+    User Notes:
+        1. All points must be located entirely within the first quadrant
+        2. A group of points must be specified as a solid or void
     """
     def __init__(self, points):
         """Initialize section property class
@@ -50,6 +54,7 @@ class SectionProperty:
         self.area = self.area()
         self.ena_x = self.ena_x()
         self.ena_y = self.ena_y()
+        self.centroid = self.centroid()
         self.ixx_x = self.i_about_x()
         self.iyy_y = self.i_about_y()
         self.ixx_c = self.i_about_x_centroid()
@@ -72,11 +77,16 @@ class SectionProperty:
         self.rmin = min(self.rx, self.ry)
 
     def convert_to_points(self):
-        """Converts list of tuples to list of Point2D"""
+        """Converts list of tuples to list of Point2D objects"""
         points = []
         for pt in points:
             points.append(Point2D(pt[0], pt[1]))
         return points
+
+
+    def order_points(self):
+        https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+        https://en.wikipedia.org/wiki/Cross_product
 
 
     def bounding_box(self):
@@ -152,18 +162,24 @@ class SectionProperty:
             
 
     def ena_y(self):
+        """Calculates elastic neutral axis in y-direction"""
         return 1.0/self.area*self.loop(self.ena_y_eq)
         
 
     def ena_y_eq(self, cur_x, cur_y, next_x, next_y):
         return ((next_x - cur_x)/8.0)*((next_y + cur_y)**2.0 + (next_y - cur_y)**2.0/3.0)
-            
+
+
+    def centroid(self):
+        return Point2D(self.ena_x, self.ena_y)
             
     def i_about_x(self):
+        """Calculates second moment of area about x-axis (y=0)"""
         return self.loop(self.i_about_x_eq)
     
 
     def i_about_x_eq(self, cur_x, cur_y, next_x, next_y):
+        """
         return ((next_x - cur_x)*(next_y + cur_y)/24.0)*((next_y + cur_y)**2.0 + (next_y - cur_y)**2.0)
            
 
