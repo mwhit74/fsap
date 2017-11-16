@@ -18,7 +18,8 @@ class Point2DTest(unittest.TestCase):
         self.assertEqual(str(self.two_d_pt), '2.300 4.500', 'Incorrect string point')
 
     def test_coord(self):
-        self.assertEqual(self.two_d_pt.coord(), (2.3, 4.5), 'Incorrect tuple')
+        self.assertEqual(self.two_d_pt.cc()[0], 2.3, 'Incorrect tuple')
+        self.assertEqual(self.two_d_pt.cc()[1], 4.5, 'Incorrect tuple')
 
     def test_set_new_x(self):
         self.two_d_pt.x = 3.7
@@ -31,7 +32,7 @@ class Point2DTest(unittest.TestCase):
 
 class Point3DTest(unittest.TestCase):
     def setUp(self):
-        self.three_d_pt = pt.ThreeDPoint(2.3, 4.5, 9.4)
+        self.three_d_pt = pt.Point3D(2.3, 4.5, 9.4)
 
     def tearDown(self):
         del(self.three_d_pt)
@@ -49,7 +50,9 @@ class Point3DTest(unittest.TestCase):
         self.assertEqual(str(self.three_d_pt), '2.300 4.500 9.400', 'Incorrect string point')
 
     def test_coord(self):
-        self.assertEqual(self.three_d_pt.coord(), (2.3, 4.5, 9.4), 'Incorrect tuple')
+        self.assertEqual(self.three_d_pt.cc()[0], 2.3, 'Incorrect tuple')
+        self.assertEqual(self.three_d_pt.cc()[1], 4.5, 'Incorrect tuple')
+        self.assertEqual(self.three_d_pt.cc()[2], 9.4, 'Incorrect tuple')
 
     def test_set_new_x(self):
         self.three_d_pt.x = 3.7
