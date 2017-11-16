@@ -1,3 +1,5 @@
+import numpy as np
+
 """
 2D and 3D point classes. 
 """
@@ -27,7 +29,7 @@ class Point2D:
 
     def cartesian_coord(self):
         """Returns a tuple of x and y cartesian coordinates."""
-        return (self.x,self.y)
+        return np.array([self.x,self.y])
     
 class Point3D:
     """Class to represent a point in 3D space."""
@@ -51,6 +53,6 @@ class Point3D:
 
     def coord(self):
         """Returns a tuple of x, y, and z coordinates."""
-        return (self.x, self.y, self.z)
+        return np.array([self.x, self.y, self.z])
 
 
