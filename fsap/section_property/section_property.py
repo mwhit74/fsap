@@ -1,6 +1,5 @@
 from fsap.utils import Point2D
-from math import sqrt
-
+from math
 
 #set up unit testing
 #start working on docstrings for section property class
@@ -44,37 +43,8 @@ class SectionProperty:
         else:
             self.points = convert_to_points(points)
        
-        self.order_points = self.order_points()
+        self.points = self.order_points()
 
-        self.max_y, self.min_y, self.max_x, self.min_x = self.bounding_box()
-
-        self.height = self.height()
-        self.width = self.width()
-
-        self.area = self.area()
-        self.ena_x = self.ena_x()
-        self.ena_y = self.ena_y()
-        self.centroid = self.centroid()
-        self.ixx_x = self.i_about_x()
-        self.iyy_y = self.i_about_y()
-        self.ixx_c = self.i_about_x_centroid()
-        self.iyy_c = self.i_about_y_centroid()
-        self.ixy_xy = self.ixy_about_xy()
-        self.ixy_c = self.ixy_about_centroid()
-
-        self.yt = self.yt()
-        self.yb = self.yb()
-        self.xr = self.xr()
-        self.xl = self.xl()
-
-        self.sxxt = self.ixx_c/self.yt
-        self.sxxb = self.ixx_c/self.yb
-        self.syyr = self.iyy_c/self.xr
-        self.syyl = self.iyy_c/self.xl
-
-        self.rx = math.sqrt(self.ixx_c/self.area)
-        self.ry = math.sqrt(self.iyy_c/self.area)
-        self.rmin = min(self.rx, self.ry)
 
     def convert_to_points(self):
         """Converts list of tuples to list of Point2D objects"""
@@ -89,61 +59,73 @@ class SectionProperty:
         https://en.wikipedia.org/wiki/Cross_product
 
 
-    def bounding_box(self):
-        """Finds the max and min x and y coordinates"""
-        max_y = 0.0
-        min_y = 0.0
-        max_x = 0.0
-        min_x = 0.0
+    def max_y(self):
+        max_y = None
         for pt in self.points:
             if pt.y > max_y:
-                max_y = pt.y
+
+        return max_y
+
+
+    def min_y(self):
+        min_y = None
+        for pt in self.points:
             if pt.y < min_y:
                 min_y = pt.y
+
+
+    def max_x(self):
+        max_x = None
+        for pt in self.points:
             if pt.x > max_x:
                 max_x = pt.x
-            if pt.y < min_y:
+
+
+    def min_x(self):
+        min_x = None
+        for pt in self.points:
+            if pt.x < min_x:
                 min_x = pt.x
 
-        return max_y, min_y, max_x, min_x
+
+    def bounding_box(self):
+        """Finds the max and min x and y coordinates"""
+        return self.max_x(), self.max_y(), self.min_x(), self.min_y()
 
 
     def height(self):
         """Calculates the height of the polygon"""
-        return self.max_y - self.min_y
+        return self.max_y() - self.min_y()
 
     
     def width(self):
         """Calculates the width of the polygon"""
-        return self.max_x - self.min_x
+        return self.max_x() - self.min_x()
 
-    #not sure if distance from centroid to extreme points will work correctly
-    #with respect the signs working right
-    #do these need to be with respect to the centoid of the section to the get
-    #signs on the section modulus correct?
+
     def yt(self):
         """Calculates the distance from ENA to extreme top fibre"""
-        return self.max_y - self.ena_y
+        return self.max_y() - self.ena_y()
 
 
     def yb(self):
         """Calculates the distance from ENA to extreme bottom fibre"""
-        return self.eny_y - self.min_y
+        return self.eny_y() - self.min_y()
 
 
     def xr(self):
         """Calculates the distance from ENA to extreme right fibre"""
-        return self.max_x - self.ena_x
+        return self.max_x() - self.ena_x()
 
 
     def xl(self):
         """Calculates the distance from ENA to extreme left fibre"""
-        return self.ena_x - self.min_x
+        return self.ena_x() - self.min_x()
 
 
     def area(self):
         """Calculates the area of the polygon"""
-        return -1*self.loop(self.area_eq)
+        return -1*self.loop(self.area_eq())
 
 
     def area_eq(self, cur_x, cur_y, next_x, next_y):
@@ -153,7 +135,7 @@ class SectionProperty:
             
     def ena_x(self):
         """Calculates elastic neutral axis in x-direction"""
-        return -1.0/self.area*self.loop(self.ena_x_eq)
+        return -1.0/self.area()*self.loop(self.ena_x_eq())
            
 
     def ena_x_eq(self, cur_x, cur_ye, next_x, next_y):
@@ -163,7 +145,7 @@ class SectionProperty:
 
     def ena_y(self):
         """Calculates elastic neutral axis in y-direction"""
-        return 1.0/self.area*self.loop(self.ena_y_eq)
+        return 1.0/self.area()*self.loop(self.ena_y_eq())
         
 
     def ena_y_eq(self, cur_x, cur_y, next_x, next_y):
@@ -171,39 +153,38 @@ class SectionProperty:
 
 
     def centroid(self):
-        return Point2D(self.ena_x, self.ena_y)
+        return Point2D(self.ena_x(), self.ena_y())
             
-    def i_about_x(self):
+    def ixx_x(self):
         """Calculates second moment of area about x-axis (y=0)"""
-        return self.loop(self.i_about_x_eq)
+        return self.loop(self.ixx_x_eq())
     
 
-    def i_about_x_eq(self, cur_x, cur_y, next_x, next_y):
-        """
+    def ixx_x_eq(self, cur_x, cur_y, next_x, next_y):
         return ((next_x - cur_x)*(next_y + cur_y)/24.0)*((next_y + cur_y)**2.0 + (next_y - cur_y)**2.0)
            
 
-    def i_about_y(self):
-        return -1*self.loop(self.i_about_y_eq)
+    def iyy_y(self):
+        return -1*self.loop(self.iyy_y_eq())
            
 
-    def i_about_y_eq(self, cur_x, cur_y, next_x, next_y):
+    def iyy_y_eq(self, cur_x, cur_y, next_x, next_y):
         return ((next_y - cur_y)*(next_x + cur_x)/24.0)*((next_x + cur_x)**2.0 + (next_x - cur_x)**2.0)
             
             
-    def i_about_x_centroid(self):
-        return self.i_about_x - self.area*math.pow(self.ena_y,2)
+    def ixx_c(self):
+        return self.ixx_x() - self.area()*math.pow(self.ena_y(),2)
             
 
-    def i_about_y_centroid(self):
-        return self.i_about_y - self.area*math.pow(self.ena_x,2)
+    def iyy_c(self):
+        return self.iyy_y() - self.area()*math.pow(self.ena_x(),2)
 
 
-    def ixy_about_xy(self):
-        return self.loop(self.ixy_about_xy_eq)
+    def ixy_xy(self):
+        return self.loop(self.ixy_xy_eq())
 
 
-    def ixy_about_xy_eq(self):
+    def ixy_xy_eq(self):
         a = 1.0/(next_x - cur_x)
         b = 1.0/8.0
         c = math.pow(next_y - cur_y,2)
@@ -219,8 +200,37 @@ class SectionProperty:
 
         return a*((b*c*d*e)+(f*g*h*i)+(j*k*l))
 
-    def ixy_about_centroid(self):
-        return self.ixy_about_xy + self.area*self.ena_x*self.ena_y
+    def ixy_c(self):
+        return self.ixy_xy() + self.area()*self.ena_x()*self.ena_y()
+
+
+    def sxxt(self):
+        return self.ixx_c()/self.yt()
+
+
+    def sxxb(self):
+        return self.ixx_c()/self.yb()
+
+
+    def syyr(self):
+        return self.iyy_c()/self.xr()
+
+
+    def syyl(self):
+        return self.iyy_c()/self.xl()
+
+
+    def rx(self):
+        return math.sqrt(self.ixx_c()/self.area())
+
+
+    def ry(self):
+        return math.sqrt(self.iyy_c()/self.area())
+
+
+    def rmin(self):
+        return min(self.rx(), self.ry())
+
 
     def loop(self, func):
             var = 0.0
@@ -239,20 +249,6 @@ class SectionProperty:
                     cur_y = next_y
             
             return var
-
-    #def graham_scan(xy_coords):
-    #        x = xy_coords[0][0]
-    #        y = xy_coords[0][1]
-
-    #        for xy in xy_coords:
-    #                if xy[1] < y:
-    #                        y = xy[1]
-    #                        x = xy[0]
-    #                if xy[1] = y and xy[0] < x:
-    #                        y = xy[1]
-    #                        x = xy[0]
-
-    #def ccw(p1, p2, p3):
 
 	
 if __name__ == "__main__":
