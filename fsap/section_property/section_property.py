@@ -57,7 +57,7 @@ class SectionProperty:
     def order_points(self):
         https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
         https://en.wikipedia.org/wiki/Cross_product
-
+        https://en.wikipedia.org/wiki/Shoelace_formula
 
     def max_y(self):
         max_y = None
