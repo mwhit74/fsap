@@ -1,5 +1,5 @@
-from fsap.utils import Point2D
-from math
+from fsap.utils.point import Point2D
+import math
 
 #set up unit testing
 #start working on docstrings for section property class
@@ -29,40 +29,44 @@ class SectionProperty:
         1. All points must be located entirely within the first quadrant
         2. A group of points must be specified as a solid or void
     """
-    def __init__(self, points):
+    def __init__(self, points=None):
         """Initialize section property class
 
         Args:
             points (list of tuples or list of Point2D): coordinate points
-            representing the outline of the polygon
+                representing the outline of the polygon
         Returns:
             None
         """
-        if all(isinstance(points, Point2D):
+        self.points = []
+        if points != None:
+            self.convert_to_points(points)
+            self.order_points()
+
+
+    def convert_to_points(self, points):
+        """Converts list of tuples to list of Point2D objects"""
+        if all(isinstance(pt, Point2D) for pt in points):
             self.points = points
         else:
-            self.points = convert_to_points(points)
-       
-        self.points = self.order_points()
-
-
-    def convert_to_points(self):
-        """Converts list of tuples to list of Point2D objects"""
-        points = []
-        for pt in points:
-            points.append(Point2D(pt[0], pt[1]))
-        return points
+            for pt in points:
+                self.points.append(Point2D(pt[0], pt[1]))
 
 
     def order_points(self):
-        https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
-        https://en.wikipedia.org/wiki/Cross_product
-        https://en.wikipedia.org/wiki/Shoelace_formula
+        
+        for pt in self.points:
+            pass
+            
+        #https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+        #https://en.wikipedia.org/wiki/Cross_product
+        #https://en.wikipedia.org/wiki/Shoelace_formula
 
     def max_y(self):
         max_y = None
         for pt in self.points:
             if pt.y > max_y:
+                max_y = pt.y
 
         return max_y
 
@@ -153,7 +157,17 @@ class SectionProperty:
 
 
     def centroid(self):
-        return Point2D(self.ena_x(), self.ena_y())
+        sum_x = 0.0
+        sum_y = 0.0
+        num_pts = len(self.points)
+        for pt in self.points:
+            sum_x = sum_x + pt.x
+            sum_y = sum_y + pt.y
+
+        xc = sum_x/num_pts
+        yc = sum_y/num_pts
+
+        return Point2D(xc, yc)
             
     def ixx_x(self):
         """Calculates second moment of area about x-axis (y=0)"""
