@@ -55,12 +55,46 @@ class SectionProperty:
 
     def order_points(self):
         
-        for pt in self.points:
-            pass
-            
+        sorted(self.points, key(less)
         #https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
         #https://en.wikipedia.org/wiki/Cross_product
         #https://en.wikipedia.org/wiki/Shoelace_formula
+
+    def less(a, b):
+        #if a is left of center and b is right of center, a is ccw from b
+        if a.x - center.x >= 0.0 and b.x - center.x < 0.0:
+            return true
+        #if a is right of center and be is left of center, a is cw from b
+        if a.x - center.x < 0.0 and b.x - center.x >= 0:
+            return false
+        #if a, b, and center lie on the same same vertical line
+        if a.x - center.x == 0.0 and b.x - center.x == 0.0:
+            #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
+            #from b.y
+            return a.y > b.y
+
+            #if not requiring points to be in first quadrant
+            #if a.y - center.y >= 0 or b.y - center.y >=0:
+            #    return a.y > b.y
+            #return b.y > a.y
+
+        #if a.x and b.x are on the same side of center calculate the
+        #cross-product  of (center -> a) x (center -> b)
+        det = ((a.x - center.x)*(b.y - center.y) - 
+                (b.x - center.x)*(a.y - center.y))
+        #if the cross-product is positive a is ccw from b, otherwise a is cw
+        #from b
+        if (det < 0):
+            return true
+        else:
+            return false
+
+        #a and b lie on the same line from the center
+        #if a is farther than b, a is ccw from b, otherwise a is cw from b
+        d1 = math.pow((a.x - center.x),2) + math.pow((a.y - center.y),2)
+        d2 = math.pow((b.x - center.x),2) + math.pow((b.y - center.y),2)
+        return d1 > d2
+
 
     def max_y(self):
         max_y = None
