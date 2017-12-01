@@ -29,7 +29,7 @@ class SectionProperty:
         1. All points must be located entirely within the first quadrant
         2. A group of points must be specified as a solid or void
     """
-    def __init__(self, points=None):
+    def __init__(self, points):
         """Initialize section property class
 
         Args:
@@ -39,9 +39,42 @@ class SectionProperty:
             None
         """
         self.points = []
-        if points != None:
-            self.convert_to_points(points)
-            self.order_points()
+        self.convert_to_points(points)
+        self.center = self.centroid()
+        #self.order_points()
+
+        #self.max_y = self.max_y()
+        #self.max_x = self.max_x()
+        #self.min_y = self.min_y()
+        #self.min_x = self.min_x()
+        #self.box = self.bounding_box()
+        #self.height = self.height()
+        #self.width = self.width()
+
+        #self.area = self.area()
+        #self.ena_x = self.ena_x()
+        #self.ena_y = self.ena_y()
+
+        #self.yt = self.yt()
+        #self.yb = self.yb()
+        #self.xl = self.xl()
+        #self.xr = self.xr()
+
+        #self.ixx_x = self.ixx_x()
+        #self.iyy_y = self.iyy_y()
+        #self.ixx_c = self.ixx_c()
+        #self.iyy_c = self.iyy_c()
+        #self.ixy_xy = self.ixy_xy()
+        #self.ixy_c = self.ixy_c()
+
+        #self.sxxt = self.sxxt()
+        #self.sxxb = self.sxxb()
+        #self.syyl = self.syyl()
+        #self.syyr = self.syyr()
+
+        #self.rx = self.rx()
+        #self.ry = self.ry()
+        #self.rmin = self.rmin()
 
 
     def convert_to_points(self, points):
@@ -54,21 +87,26 @@ class SectionProperty:
 
 
     def order_points(self):
-        
-        sorted(self.points, key(less)
-        #https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
-        #https://en.wikipedia.org/wiki/Cross_product
-        #https://en.wikipedia.org/wiki/Shoelace_formula
+        """Order points in a counter-clockwise direction
+
+        References:
+        https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+        https://en.wikipedia.org/wiki/Cross_product
+        https://en.wikipedia.org/wiki/Shoelace_formula
+        """
+
+        sorted(self.points, key(less))
 
     def less(a, b):
+        """Comparison function to determine the order of two points"""
         #if a is left of center and b is right of center, a is ccw from b
-        if a.x - center.x >= 0.0 and b.x - center.x < 0.0:
+        if a.x - self.center.x >= 0.0 and b.x - self.center.x < 0.0:
             return true
         #if a is right of center and be is left of center, a is cw from b
-        if a.x - center.x < 0.0 and b.x - center.x >= 0:
+        if a.x - self.center.x < 0.0 and b.x - self.center.x >= 0:
             return false
         #if a, b, and center lie on the same same vertical line
-        if a.x - center.x == 0.0 and b.x - center.x == 0.0:
+        if a.x - self.center.x == 0.0 and b.x - self.center.x == 0.0:
             #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
             #from b.y
             return a.y > b.y
@@ -80,8 +118,8 @@ class SectionProperty:
 
         #if a.x and b.x are on the same side of center calculate the
         #cross-product  of (center -> a) x (center -> b)
-        det = ((a.x - center.x)*(b.y - center.y) - 
-                (b.x - center.x)*(a.y - center.y))
+        det = ((a.x - self.center.x)*(b.y - self.center.y) - 
+                (b.x - self.center.x)*(a.y - self.center.y))
         #if the cross-product is positive a is ccw from b, otherwise a is cw
         #from b
         if (det < 0):
@@ -91,12 +129,13 @@ class SectionProperty:
 
         #a and b lie on the same line from the center
         #if a is farther than b, a is ccw from b, otherwise a is cw from b
-        d1 = math.pow((a.x - center.x),2) + math.pow((a.y - center.y),2)
-        d2 = math.pow((b.x - center.x),2) + math.pow((b.y - center.y),2)
+        d1 = math.pow((a.x - self.center.x),2) + math.pow((a.y - self.center.y),2)
+        d2 = math.pow((b.x - self.center.x),2) + math.pow((b.y - self.center.y),2)
         return d1 > d2
 
 
     def max_y(self):
+        """Finds the maximum y-coordinate"""
         max_y = None
         for pt in self.points:
             if pt.y > max_y:
@@ -106,6 +145,7 @@ class SectionProperty:
 
 
     def min_y(self):
+        """Finds the minimum y-coordinate"""
         min_y = None
         for pt in self.points:
             if pt.y < min_y:
@@ -113,6 +153,7 @@ class SectionProperty:
 
 
     def max_x(self):
+        """Finds the maximum x-coordinate"""
         max_x = None
         for pt in self.points:
             if pt.x > max_x:
@@ -120,6 +161,7 @@ class SectionProperty:
 
 
     def min_x(self):
+        """Finds the minimum x-coordinate"""
         min_x = None
         for pt in self.points:
             if pt.x < min_x:
@@ -128,37 +170,37 @@ class SectionProperty:
 
     def bounding_box(self):
         """Finds the max and min x and y coordinates"""
-        return self.max_x(), self.max_y(), self.min_x(), self.min_y()
+        return self.max_x, self.max_y, self.min_x, self.min_y
 
 
     def height(self):
         """Calculates the height of the polygon"""
-        return self.max_y() - self.min_y()
+        return self.max_y - self.min_y
 
     
     def width(self):
         """Calculates the width of the polygon"""
-        return self.max_x() - self.min_x()
+        return self.max_x - self.min_x
 
 
     def yt(self):
         """Calculates the distance from ENA to extreme top fibre"""
-        return self.max_y() - self.ena_y()
+        return self.max_y - self.ena_y
 
 
     def yb(self):
         """Calculates the distance from ENA to extreme bottom fibre"""
-        return self.eny_y() - self.min_y()
+        return self.eny_y - self.min_y
 
 
     def xr(self):
         """Calculates the distance from ENA to extreme right fibre"""
-        return self.max_x() - self.ena_x()
+        return self.max_x - self.ena_x
 
 
     def xl(self):
         """Calculates the distance from ENA to extreme left fibre"""
-        return self.ena_x() - self.min_x()
+        return self.ena_x - self.min_x
 
 
     def area(self):
@@ -173,7 +215,7 @@ class SectionProperty:
             
     def ena_x(self):
         """Calculates elastic neutral axis in x-direction"""
-        return -1.0/self.area()*self.loop(self.ena_x_eq())
+        return -1.0/self.area*self.loop(self.ena_x_eq())
            
 
     def ena_x_eq(self, cur_x, cur_ye, next_x, next_y):
@@ -183,7 +225,7 @@ class SectionProperty:
 
     def ena_y(self):
         """Calculates elastic neutral axis in y-direction"""
-        return 1.0/self.area()*self.loop(self.ena_y_eq())
+        return 1.0/self.area*self.loop(self.ena_y_eq())
         
 
     def ena_y_eq(self, cur_x, cur_y, next_x, next_y):
@@ -191,6 +233,7 @@ class SectionProperty:
 
 
     def centroid(self):
+        """Calculates the centroid coordinate of the cross-section"""
         sum_x = 0.0
         sum_y = 0.0
         num_pts = len(self.points)
@@ -209,30 +252,37 @@ class SectionProperty:
     
 
     def ixx_x_eq(self, cur_x, cur_y, next_x, next_y):
+        """Equation used to calculate the second moment of area about x-axis"""
         return ((next_x - cur_x)*(next_y + cur_y)/24.0)*((next_y + cur_y)**2.0 + (next_y - cur_y)**2.0)
            
 
     def iyy_y(self):
+        """Calculates second moment of area about y-axis (x=0)"""
         return -1*self.loop(self.iyy_y_eq())
            
 
     def iyy_y_eq(self, cur_x, cur_y, next_x, next_y):
+        """Equation used to calculate the second moment of area about y-axis"""
         return ((next_y - cur_y)*(next_x + cur_x)/24.0)*((next_x + cur_x)**2.0 + (next_x - cur_x)**2.0)
             
             
     def ixx_c(self):
-        return self.ixx_x() - self.area()*math.pow(self.ena_y(),2)
+        """Calculates the second moment of area about x-axis of centroid"""
+        return self.ixx_x - self.area*math.pow(self.ena_y,2)
             
 
     def iyy_c(self):
-        return self.iyy_y() - self.area()*math.pow(self.ena_x(),2)
+        """Calculates the second moment of area about y-axis of centroid"""
+        return self.iyy_y - self.area*math.pow(self.ena_x,2)
 
 
     def ixy_xy(self):
+        """Calculates the polar moment of area about the xy axis (0,0)"""
         return self.loop(self.ixy_xy_eq())
 
 
     def ixy_xy_eq(self):
+        """Equation used to calc the polar moment area about the xy axis"""
         a = 1.0/(next_x - cur_x)
         b = 1.0/8.0
         c = math.pow(next_y - cur_y,2)
@@ -249,54 +299,63 @@ class SectionProperty:
         return a*((b*c*d*e)+(f*g*h*i)+(j*k*l))
 
     def ixy_c(self):
-        return self.ixy_xy() + self.area()*self.ena_x()*self.ena_y()
+        """Calculates the polar moment of area about the centroid"""
+        return self.ixy_xy + self.area*self.ena_x*self.ena_y
 
 
     def sxxt(self):
-        return self.ixx_c()/self.yt()
+        """Calculates the elastic section modulus wrt extreme top fibre"""
+        return self.ixx_c/self.yt
 
 
     def sxxb(self):
-        return self.ixx_c()/self.yb()
+        """Calculates the elastic section modulus wrt extreme bottom fibre"""
+        return self.ixx_c/self.yb
 
 
     def syyr(self):
-        return self.iyy_c()/self.xr()
+        """Calculates the elastic section modulus wrt extreme right fibre"""
+        return self.iyy_c/self.xr
 
 
     def syyl(self):
-        return self.iyy_c()/self.xl()
+        """Calculates the elastic section modulus wrt extreme left fibre"""
+        return self.iyy_c/self.xl
 
 
     def rx(self):
-        return math.sqrt(self.ixx_c()/self.area())
+        """Calculates the radius of gyration about the x-axis of centroid"""
+        return math.sqrt(self.ixx_c/self.area)
 
 
     def ry(self):
-        return math.sqrt(self.iyy_c()/self.area())
+        """Calculates the radius of gyration about the y-axis of centroid"""
+        return math.sqrt(self.iyy_c/self.area)
 
 
     def rmin(self):
-        return min(self.rx(), self.ry())
+        """Finds the minimum radius of gyration"""
+        return min(self.rx, self.ry)
 
 
     def loop(self, func):
-            var = 0.0
-           
-            cur_pt = self.points[0]
-            cur_x = cur_pt.x
-            cur_y = cur_pt.y
-            
-            for pt in self.points:
-                    next_x = pt.x
-                    next_y = pt.y
-                    
-                    var = var + func(cur_x, cur_y, next_x, next_y)
-                            
-                    cur_x = next_x
-                    cur_y = next_y
-            
-            return var
+        """Loops thru points using given equation (func) to calc section prop"""
+        var = 0.0
+        
+        cur_pt = self.points[0]
+        cur_x = cur_pt.x
+        cur_y = cur_pt.y
+        
+        for pt in self.points:
+                next_x = pt.x
+                next_y = pt.y
+                
+                var = var + func(cur_x, cur_y, next_x, next_y)
+                        
+                cur_x = next_x
+                cur_y = next_y
+        
+        return var
 
 	
 if __name__ == "__main__":
