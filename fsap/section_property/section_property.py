@@ -1,5 +1,7 @@
 from fsap.utils.point import Point2D
 import math
+import functools
+import pdb
 
 #set up unit testing
 #start working on docstrings for section property class
@@ -41,7 +43,7 @@ class SectionProperty:
         self.points = []
         self.convert_to_points(points)
         self.center = self.centroid()
-        #self.order_points()
+        self.order_points()
 
         #self.max_y = self.max_y()
         #self.max_x = self.max_x()
@@ -94,21 +96,25 @@ class SectionProperty:
         https://en.wikipedia.org/wiki/Cross_product
         https://en.wikipedia.org/wiki/Shoelace_formula
         """
+        #pdb.set_trace()
+        sorted(self.points, key=functools.cmp_to_key(self.less))
 
-        sorted(self.points, key(less))
-
-    def less(a, b):
+    def less(self,a, b):
         """Comparison function to determine the order of two points"""
         #if a is left of center and b is right of center, a is ccw from b
         if a.x - self.center.x >= 0.0 and b.x - self.center.x < 0.0:
-            return true
+            print "a is left of c and b is right of c"
+            return True
         #if a is right of center and be is left of center, a is cw from b
         if a.x - self.center.x < 0.0 and b.x - self.center.x >= 0:
-            return false
+            print "a is right of c and b is left of c"
+            return False
         #if a, b, and center lie on the same same vertical line
         if a.x - self.center.x == 0.0 and b.x - self.center.x == 0.0:
             #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
             #from b.y
+            print "a, b, c on vertical"
+            print a.y > b.y
             return a.y > b.y
 
             #if not requiring points to be in first quadrant
@@ -120,17 +126,21 @@ class SectionProperty:
         #cross-product  of (center -> a) x (center -> b)
         det = ((a.x - self.center.x)*(b.y - self.center.y) - 
                 (b.x - self.center.x)*(a.y - self.center.y))
-        #if the cross-product is positive a is ccw from b, otherwise a is cw
+        #if the cross-product is positive a is cw from b, otherwise a is ccw
         #from b
         if (det < 0):
-            return true
+            print "det < 0, a cw from b"
+            return True
         else:
-            return false
+            print "det > 0, a ccw from b"
+            return False
 
         #a and b lie on the same line from the center
         #if a is farther than b, a is ccw from b, otherwise a is cw from b
         d1 = math.pow((a.x - self.center.x),2) + math.pow((a.y - self.center.y),2)
         d2 = math.pow((b.x - self.center.x),2) + math.pow((b.y - self.center.y),2)
+        print "a,b on same line from center"
+        print d1 > d2
         return d1 > d2
 
 
@@ -236,7 +246,8 @@ class SectionProperty:
         """Calculates the centroid coordinate of the cross-section"""
         sum_x = 0.0
         sum_y = 0.0
-        num_pts = len(self.points)
+        #subtract 1 from num points, last point closes polygon
+        num_pts = len(self.points)-1
         for pt in self.points:
             sum_x = sum_x + pt.x
             sum_y = sum_y + pt.y
@@ -359,14 +370,8 @@ class SectionProperty:
 
 	
 if __name__ == "__main__":
-	#xy_coords = [[0.0,0.0],[2.0,0.0],[2.0,2.0],[0.0,2.0],[0.0,0.0]] #rectangle
-	#xy_coords = [[0,0],[2,0],[1,2],[0,0]] #triangle
-	xy_coords = [[0.0,0.0],[7.0,0.0],[8.26,3.5],[0.0, 3.5],[0.0,0.0]]
-	
-	print "Area: " + str(area(xy_coords))
-	print "ena in x: " + str(ena_x(xy_coords))
-	print "ena in y: " + str(ena_y(xy_coords))
-	print "I about x: " + str(I_about_x(xy_coords))
-	print "I about y: " + str(I_about_y(xy_coords))
-	print "I about x at centroid: " + str(I_about_x_centroid(xy_coords))
-	print "I about y at centroid: " + str(I_about_y_centroid(xy_coords))
+    points = [(0.0,0.0),(1.0,1.0),(1.0,0.0),(0.0,1.0), (0.0, 0.0)]
+    sp1 = SectionProperty(points)
+    for pt in sp1.points:
+        print pt
+    print sp1.center
