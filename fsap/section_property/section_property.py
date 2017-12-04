@@ -43,7 +43,9 @@ class SectionProperty:
         self.points = []
         self.convert_to_points(points)
         self.start_pt = self.start_pt()
+        self.center = self.centroid()
         self.order_points()
+        self.add_end_pt()
 
         #self.max_y = self.max_y()
         #self.max_x = self.max_x()
@@ -99,6 +101,7 @@ class SectionProperty:
         l2 = sorted(l1, key=get_y)
         return l2[0]
 
+
     def order_points(self):
         """Order points in a counter-clockwise direction
 
@@ -108,41 +111,44 @@ class SectionProperty:
         https://en.wikipedia.org/wiki/Shoelace_formula
         """
         #pdb.set_trace()
-        sl = sorted(self.points, key=functools.cmp_to_key(self.less))
-        for pt in sl:
+        for pt in self.points:
             print pt
+        print "\n"
+
+        self.points.sort(key=functools.cmp_to_key(self.less))
+
 
     def less(self,a, b):
         print a,b
         """Comparison function to determine the order of two points"""
-        #if a is right of start_pt and b is left of start_pt, a is ccw from b
-        if a.x - self.start_pt.x >= 0.0 and b.x - self.start_pt.x < 0.0:
+        #if a is right of center and b is left of center, a is ccw from b
+        if a.x - self.center.x >= 0.0 and b.x - self.center.x < 0.0:
             print "a is right of c and b is left of c, True"
             return 1
-        #if a is left of start_pt and be is right of start_pt, a is cw from b
-        if a.x - self.start_pt.x < 0.0 and b.x - self.start_pt.x >= 0:
+        #if a is left of center and b is right of center, a is cw from b
+        if a.x - self.center.x < 0.0 and b.x - self.center.x >= 0:
             print "a is left of c and b is right of c, False"
             return -1
-        #if a, b, and start_pt lie on the same same vertical line
-        if a.x - self.start_pt.x == 0.0 and b.x - self.start_pt.x == 0.0:
+        #if a, b, and center lie on the same same vertical line
+        if a.x - self.center.x == 0.0 and b.x - self.center.x == 0.0:
             #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
             #from b.y
             print "a, b, c on vertical"
-            print a.y > b.y
-            if a.y > b.y:
+            print a.y < b.y
+            if a.y < b.y:
                 return 1
             else:
                 return -1
 
             #if not requiring points to be in first quadrant
-            #if a.y - start_pt.y >= 0 or b.y - start_pt.y >=0:
+            #if a.y - center.y >= 0 or b.y - center.y >=0:
             #    return a.y > b.y
             #return b.y > a.y
 
-        #if a.x and b.x are on the same side of start_pt calculate the
-        #cross-product  of (start_pt -> a) x (start_pt -> b)
-        det = ((a.x - self.start_pt.x)*(b.y - self.start_pt.y) - 
-                (b.x - self.start_pt.x)*(a.y - self.start_pt.y))
+        #if a.x and b.x are on the same side of center calculate the
+        #cross-product  of (center -> a) x (center -> b)
+        det = ((a.x - self.center.x)*(b.y - self.center.y) - 
+                (b.x - self.center.x)*(a.y - self.center.y))
         #if the cross-product is positive a is cw from b, otherwise a is ccw
         #from b
         if (det < 0):
@@ -152,16 +158,20 @@ class SectionProperty:
             print "det > 0, a ccw from b, False"
             return -1
 
-        #a and b lie on the same line from the start_pt
+        #a and b lie on the same line from the center
         #if a is farther than b, a is ccw from b, otherwise a is cw from b
-        d1 = math.pow((a.x - self.start_pt.x),2) + math.pow((a.y - self.start_pt.y),2)
-        d2 = math.pow((b.x - self.start_pt.x),2) + math.pow((b.y - self.start_pt.y),2)
-        print "a,b on same line from start_pt"
+        d1 = math.pow((a.x - self.center.x),2) + math.pow((a.y - self.center.y),2)
+        d2 = math.pow((b.x - self.center.x),2) + math.pow((b.y - self.center.y),2)
+        print "a,b on same line from center"
         print d1 > d2
         if d1 > d2:
             return 1
         else:
             return -1
+
+
+    def add_end_pt(self):
+        self.points.append(self.start_pt)
 
 
     def max_y(self):
@@ -390,8 +400,28 @@ class SectionProperty:
 
 	
 if __name__ == "__main__":
-    points = [(0.0,0.0),(1.0,1.0),(1.0,0.0),(0.0,1.0), (0.0, 0.0)]
+    points = [(1.0,1.0),(1.0,0.0),(0.0,1.0),(0.0, 0.0)]
     sp1 = SectionProperty(points)
-    #for pt in sp1.points:
-    #    print pt
-    #print sp1.center
+    for pt in sp1.points:
+        print pt
+
+    print "\n"
+    points = [(0.0, 0.0),(1.0,1.0),(1.0,0.0),(0.0,1.0)]
+    sp2 = SectionProperty(points)
+    print "help " + str(sp2.start_pt)
+    for pt in sp2.points:
+        print pt
+
+    print "\n"
+    points = [(1.0,0.0),(2.0,1.0),(3.0,0.0)]
+    sp3 = SectionProperty(points)
+    print "help " + str(sp3.start_pt)
+    for pt in sp3.points:
+        print pt
+
+    print "\n"
+    points = [(2.0,1.0),(3.0,0.0),(1.0,0.0)]
+    sp4 = SectionProperty(points)
+    print "help " + str(sp4.start_pt)
+    for pt in sp4.points:
+        print pt
