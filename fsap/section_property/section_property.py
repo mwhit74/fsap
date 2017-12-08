@@ -42,34 +42,34 @@ class SectionProperty:
         """
         self.points = []
         self.convert_to_points(points)
-        self.start_pt = self.start_pt()
-        self.center = self.centroid()
+        #self.start_pt = self.start_pt()
+        self.centroid = self.centroid()
         self.order_points()
         self.add_end_pt()
 
-        #self.max_y = self.max_y()
-        #self.max_x = self.max_x()
-        #self.min_y = self.min_y()
-        #self.min_x = self.min_x()
-        #self.box = self.bounding_box()
-        #self.height = self.height()
-        #self.width = self.width()
+        self.max_y = self.max_y()
+        self.max_x = self.max_x()
+        self.min_y = self.min_y()
+        self.min_x = self.min_x()
+        self.box = self.bounding_box()
+        self.height = self.height()
+        self.width = self.width()
 
-        #self.area = self.area()
-        #self.ena_x = self.ena_x()
-        #self.ena_y = self.ena_y()
+        self.area = self.area()
+        self.ena_x = self.ena_x()
+        self.ena_y = self.ena_y()
 
-        #self.yt = self.yt()
-        #self.yb = self.yb()
-        #self.xl = self.xl()
-        #self.xr = self.xr()
+        self.yt = self.yt()
+        self.yb = self.yb()
+        self.xl = self.xl()
+        self.xr = self.xr()
 
-        #self.ixx_x = self.ixx_x()
-        #self.iyy_y = self.iyy_y()
-        #self.ixx_c = self.ixx_c()
-        #self.iyy_c = self.iyy_c()
-        #self.ixy_xy = self.ixy_xy()
-        #self.ixy_c = self.ixy_c()
+        self.ixx_x = self.ixx_x()
+        self.iyy_y = self.iyy_y()
+        self.ixx_c = self.ixx_c()
+        self.iyy_c = self.iyy_c()
+        self.ixy_xy = self.ixy_xy()
+        self.ixy_c = self.ixy_c()
 
         #self.sxxt = self.sxxt()
         #self.sxxb = self.sxxb()
@@ -92,13 +92,8 @@ class SectionProperty:
 
     def start_pt(self):
         """Find point in lower left position"""
-        def get_x(pt):
-            return pt.x
-        def get_y(pt):
-            return pt.y
-
-        l1 = sorted(self.points, key=get_x)
-        l2 = sorted(l1, key=get_y)
+        l1 = sorted(self.points, key=lambda pt: pt.x)
+        l2 = sorted(l1, key=lambda pt: pt.y)
         return l2[0]
 
 
@@ -110,31 +105,21 @@ class SectionProperty:
         https://en.wikipedia.org/wiki/Cross_product
         https://en.wikipedia.org/wiki/Shoelace_formula
         """
-        #pdb.set_trace()
-        for pt in self.points:
-            print pt
-        print "\n"
-
         self.points.sort(key=functools.cmp_to_key(self.less))
 
 
     def less(self,a, b):
-        print a,b
         """Comparison function to determine the order of two points"""
         #if a is right of center and b is left of center, a is ccw from b
-        if a.x - self.center.x >= 0.0 and b.x - self.center.x < 0.0:
-            print "a is right of c and b is left of c, True"
+        if a.x - self.centroid.x >= 0.0 and b.x - self.centroid.x < 0.0:
             return 1
         #if a is left of center and b is right of center, a is cw from b
-        if a.x - self.center.x < 0.0 and b.x - self.center.x >= 0:
-            print "a is left of c and b is right of c, False"
+        if a.x - self.centroid.x < 0.0 and b.x - self.centroid.x >= 0:
             return -1
         #if a, b, and center lie on the same same vertical line
-        if a.x - self.center.x == 0.0 and b.x - self.center.x == 0.0:
+        if a.x - self.centroid.x == 0.0 and b.x - self.centroid.x == 0.0:
             #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
             #from b.y
-            print "a, b, c on vertical"
-            print a.y < b.y
             if a.y < b.y:
                 return 1
             else:
@@ -147,22 +132,19 @@ class SectionProperty:
 
         #if a.x and b.x are on the same side of center calculate the
         #cross-product  of (center -> a) x (center -> b)
-        det = ((a.x - self.center.x)*(b.y - self.center.y) - 
-                (b.x - self.center.x)*(a.y - self.center.y))
+        det = ((a.x - self.centroid.x)*(b.y - self.centroid.y) - 
+                (b.x - self.centroid.x)*(a.y - self.centroid.y))
         #if the cross-product is positive a is cw from b, otherwise a is ccw
         #from b
         if (det < 0):
-            print "det < 0, a cw from b, True"
             return 1
         else:
-            print "det > 0, a ccw from b, False"
             return -1
 
         #a and b lie on the same line from the center
         #if a is farther than b, a is ccw from b, otherwise a is cw from b
-        d1 = math.pow((a.x - self.center.x),2) + math.pow((a.y - self.center.y),2)
-        d2 = math.pow((b.x - self.center.x),2) + math.pow((b.y - self.center.y),2)
-        print "a,b on same line from center"
+        d1 = math.pow((a.x - self.centroid.x),2) + math.pow((a.y - self.centroid.y),2)
+        d2 = math.pow((b.x - self.centroid.x),2) + math.pow((b.y - self.centroid.y),2)
         print d1 > d2
         if d1 > d2:
             return 1
@@ -171,41 +153,31 @@ class SectionProperty:
 
 
     def add_end_pt(self):
-        self.points.append(self.start_pt)
+        self.points.append(self.points[0])
 
 
     def max_y(self):
         """Finds the maximum y-coordinate"""
-        max_y = None
-        for pt in self.points:
-            if pt.y > max_y:
-                max_y = pt.y
-
-        return max_y
+        max_y_pt = max(self.points, key=lambda pt: pt.y)
+        return max_y_pt.y
 
 
     def min_y(self):
         """Finds the minimum y-coordinate"""
-        min_y = None
-        for pt in self.points:
-            if pt.y < min_y:
-                min_y = pt.y
+        min_y_pt = min(self.points, key=lambda pt: pt.y)
+        return min_y_pt.y
 
 
     def max_x(self):
         """Finds the maximum x-coordinate"""
-        max_x = None
-        for pt in self.points:
-            if pt.x > max_x:
-                max_x = pt.x
+        max_x_pt = max(self.points, key=lambda pt: pt.x)
+        return max_x_pt.x
 
 
     def min_x(self):
         """Finds the minimum x-coordinate"""
-        min_x = None
-        for pt in self.points:
-            if pt.x < min_x:
-                min_x = pt.x
+        min_x_pt = min(self.points, key=lambda pt: pt.x)
+        return min_x_pt.x
 
 
     def bounding_box(self):
@@ -230,7 +202,7 @@ class SectionProperty:
 
     def yb(self):
         """Calculates the distance from ENA to extreme bottom fibre"""
-        return self.eny_y - self.min_y
+        return self.ena_y - self.min_y
 
 
     def xr(self):
@@ -245,7 +217,7 @@ class SectionProperty:
 
     def area(self):
         """Calculates the area of the polygon"""
-        return -1*self.loop(self.area_eq())
+        return -1*self.loop(self.area_eq)
 
 
     def area_eq(self, cur_x, cur_y, next_x, next_y):
@@ -255,17 +227,17 @@ class SectionProperty:
             
     def ena_x(self):
         """Calculates elastic neutral axis in x-direction"""
-        return -1.0/self.area*self.loop(self.ena_x_eq())
+        return -1.0/self.area*self.loop(self.ena_x_eq)
            
 
-    def ena_x_eq(self, cur_x, cur_ye, next_x, next_y):
+    def ena_x_eq(self, cur_x, cur_y, next_x, next_y):
         """Equation use to calculate elastic neutral axis in x-direction"""
         return ((next_y - cur_y)/8.0)*((next_x + cur_x)**2.0 + (next_x - cur_x)**2.0/3.0)
             
 
     def ena_y(self):
         """Calculates elastic neutral axis in y-direction"""
-        return 1.0/self.area*self.loop(self.ena_y_eq())
+        return 1.0/self.area*self.loop(self.ena_y_eq)
         
 
     def ena_y_eq(self, cur_x, cur_y, next_x, next_y):
@@ -277,7 +249,7 @@ class SectionProperty:
         sum_x = 0.0
         sum_y = 0.0
         #subtract 1 from num points, last point closes polygon
-        num_pts = len(self.points)-1
+        num_pts = len(self.points)
         for pt in self.points:
             sum_x = sum_x + pt.x
             sum_y = sum_y + pt.y
@@ -289,7 +261,7 @@ class SectionProperty:
             
     def ixx_x(self):
         """Calculates second moment of area about x-axis (y=0)"""
-        return self.loop(self.ixx_x_eq())
+        return self.loop(self.ixx_x_eq)
     
 
     def ixx_x_eq(self, cur_x, cur_y, next_x, next_y):
@@ -299,7 +271,7 @@ class SectionProperty:
 
     def iyy_y(self):
         """Calculates second moment of area about y-axis (x=0)"""
-        return -1*self.loop(self.iyy_y_eq())
+        return -1*self.loop(self.iyy_y_eq)
            
 
     def iyy_y_eq(self, cur_x, cur_y, next_x, next_y):
@@ -319,12 +291,15 @@ class SectionProperty:
 
     def ixy_xy(self):
         """Calculates the polar moment of area about the xy axis (0,0)"""
-        return self.loop(self.ixy_xy_eq())
+        return self.loop(self.ixy_xy_eq)
 
 
-    def ixy_xy_eq(self):
+    def ixy_xy_eq(self, cur_x, cur_y, next_x, next_y):
         """Equation used to calc the polar moment area about the xy axis"""
-        a = 1.0/(next_x - cur_x)
+        if next_x - cur_x == 0.0:
+            a = 0.0
+        else:
+            a = 1.0/(next_x - cur_x)
         b = 1.0/8.0
         c = math.pow(next_y - cur_y,2)
         d = next_x + cur_x
@@ -408,20 +383,17 @@ if __name__ == "__main__":
     print "\n"
     points = [(0.0, 0.0),(1.0,1.0),(1.0,0.0),(0.0,1.0)]
     sp2 = SectionProperty(points)
-    print "help " + str(sp2.start_pt)
     for pt in sp2.points:
         print pt
 
     print "\n"
     points = [(1.0,0.0),(2.0,1.0),(3.0,0.0)]
     sp3 = SectionProperty(points)
-    print "help " + str(sp3.start_pt)
     for pt in sp3.points:
         print pt
 
     print "\n"
     points = [(2.0,1.0),(3.0,0.0),(1.0,0.0)]
     sp4 = SectionProperty(points)
-    print "help " + str(sp4.start_pt)
     for pt in sp4.points:
         print pt
