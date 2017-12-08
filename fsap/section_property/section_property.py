@@ -3,9 +3,6 @@ import math
 import functools
 import pdb
 
-#set up unit testing
-#start working on docstrings for section property class
-
 #additional functionality to add:
 #   calc principle axes
 #   calc PNA 
@@ -22,6 +19,8 @@ import pdb
 #       +hollow tubes are different
 #   first moment of area - Qx and Qy
 #   shape factor
+#   voids
+#   circles
 
 class SectionProperty:
     """
@@ -42,7 +41,6 @@ class SectionProperty:
         """
         self.points = []
         self.convert_to_points(points)
-        #self.start_pt = self.start_pt()
         self.centroid = self.centroid()
         self.order_points()
         self.add_end_pt()
@@ -88,13 +86,6 @@ class SectionProperty:
         else:
             for pt in points:
                 self.points.append(Point2D(pt[0], pt[1]))
-
-
-    def start_pt(self):
-        """Find point in lower left position"""
-        l1 = sorted(self.points, key=lambda pt: pt.x)
-        l2 = sorted(l1, key=lambda pt: pt.y)
-        return l2[0]
 
 
     def order_points(self):
@@ -373,10 +364,5 @@ class SectionProperty:
         
         return var
 
-	
-if __name__ == "__main__":
-    points = [(1.0,1.0),(1.0,0.0),(0.0,1.0),(0.0, 0.0)]
-    sp1 = SectionProperty(points)
-    for pt in sp1.points:
-        print pt
 
+class RectSectionPropety(SectionProperty):

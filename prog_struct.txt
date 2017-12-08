@@ -54,15 +54,19 @@ ref - reference from another library
             %general section properties based on points
                 +graham scan
             %elastic
-            %plastic
+            {plastic}
             %correct shear area for general shape
-            %correct plastic section modulus for general shape
+            {correct plastic section modulus for general shape}
             %correct torsional constant for general shape
-            %seperate module for independent use
+            {seperate module for independent use}
         sp_rectangle class
         sp_circle class
         sp_i_shape class
         sp_angle class
+        sp_channel class
+        sp_round_tube class
+        sp_rect_tube
+        sp_user_defined class
     /analysis
         /truss
             axial_k_matrix class
