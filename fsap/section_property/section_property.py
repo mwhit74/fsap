@@ -71,14 +71,14 @@ class SectionProperty:
         self.ixy_xy = self.ixy_xy()
         self.ixy_c = self.ixy_c()
 
-        #self.sxxt = self.sxxt()
-        #self.sxxb = self.sxxb()
-        #self.syyl = self.syyl()
-        #self.syyr = self.syyr()
+        self.sxxt = self.sxxt()
+        self.sxxb = self.sxxb()
+        self.syyl = self.syyl()
+        self.syyr = self.syyr()
 
-        #self.rx = self.rx()
-        #self.ry = self.ry()
-        #self.rmin = self.rmin()
+        self.rx = self.rx()
+        self.ry = self.ry()
+        self.rmin = self.rmin()
 
 
     def convert_to_points(self, points):
@@ -111,13 +111,13 @@ class SectionProperty:
     def less(self,a, b):
         """Comparison function to determine the order of two points"""
         #if a is right of center and b is left of center, a is ccw from b
-        if a.x - self.centroid.x >= 0.0 and b.x - self.centroid.x < 0.0:
+        if b.x - self.centroid.x >= 0.0 and a.x - self.centroid.x < 0.0:
             return 1
         #if a is left of center and b is right of center, a is cw from b
-        if a.x - self.centroid.x < 0.0 and b.x - self.centroid.x >= 0:
+        if b.x - self.centroid.x < 0.0 and a.x - self.centroid.x >= 0:
             return -1
         #if a, b, and center lie on the same same vertical line
-        if a.x - self.centroid.x == 0.0 and b.x - self.centroid.x == 0.0:
+        if b.x - self.centroid.x == 0.0 and a.x - self.centroid.x == 0.0:
             #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
             #from b.y
             if a.y < b.y:
@@ -136,7 +136,7 @@ class SectionProperty:
                 (b.x - self.centroid.x)*(a.y - self.centroid.y))
         #if the cross-product is positive a is cw from b, otherwise a is ccw
         #from b
-        if (det < 0):
+        if (det > 0):
             return 1
         else:
             return -1
@@ -380,20 +380,3 @@ if __name__ == "__main__":
     for pt in sp1.points:
         print pt
 
-    print "\n"
-    points = [(0.0, 0.0),(1.0,1.0),(1.0,0.0),(0.0,1.0)]
-    sp2 = SectionProperty(points)
-    for pt in sp2.points:
-        print pt
-
-    print "\n"
-    points = [(1.0,0.0),(2.0,1.0),(3.0,0.0)]
-    sp3 = SectionProperty(points)
-    for pt in sp3.points:
-        print pt
-
-    print "\n"
-    points = [(2.0,1.0),(3.0,0.0),(1.0,0.0)]
-    sp4 = SectionProperty(points)
-    for pt in sp4.points:
-        print pt
