@@ -20,7 +20,7 @@ ref - reference from another library
         unit_conversion.py
             %https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
             %https://social.msdn.microsoft.com/Forums/en-US/f45acc04-c5b9-4c04-af42-1657ea3f6105/need-help-with-unit-conversion-class?forum=csharpgeneral
-        matrix_inversion.py
+        matrix_decomposition.py
             %i want to use numpy because it is really good stuff
             %i also want to write my own stuff because i want to learn and i
             want the code to be mine
@@ -30,10 +30,11 @@ ref - reference from another library
             %i think the latter appeals to me more but it will take much much
             longer
             %mine also might be slower because numpy uses C libraries
+            %what do i run here; LU Decomposition, Cholesky, Frontal, one of each? 
         stress_tensor.py
         strain_tensor.py
     /geometry
-        joint class 
+        node class 
         frame class
         link class
         {thin_plate class}
@@ -49,15 +50,13 @@ ref - reference from another library
         matl_user_defined class
         matl_steel class
         matl_concrete class
+        %would some kind of matrix be useable here
     /section_property
         sp_base class
-            %general section properties based on points
-                +graham scan
-            %elastic
-            {plastic}
             %correct shear area for general shape
-            {correct plastic section modulus for general shape}
             %correct torsional constant for general shape
+            {plastic}
+            {correct plastic section modulus for general shape}
             {seperate module for independent use}
         sp_rectangle class
         sp_circle class
@@ -85,16 +84,17 @@ ref - reference from another library
         {load_moving class}
             %multi-step static - think mlob - load on structure>solve structure
             %influence line/surface
+            %LU decomposition -> iterate through RHS with a unit load in each DOF, will reduce computation time -> save shear, moment, and displacement results at all nodes for each unit load -> influence line
     /structural analysis engine
+        member.py
+            %class to organize element level properties
+            %will hold geometry class instance, mat'l class instance, section prop class instance, section orientation, section offset, element stiffness matrix, discretization, geometric stiffness matrix(?), mass stiffness matrix(?), local to global transformation maxtrix
         model.py
             %assemble global stiffness matrix
             %run analysis
     /physics engine
         model.py
-            %not totally sure how to implement this or if it's needed
-            %could be used to model forces, weights, masses, and interactions
-            %i mean structural analysis is essentially applied physics so it
-            might make sense to include some software to model that
+            %i think this will come in with the mass stiffness matrix; still learning about it
     /output
 
 
