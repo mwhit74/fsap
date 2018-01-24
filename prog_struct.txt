@@ -13,10 +13,6 @@ ref - reference from another library
         {plane.py}
         {volume.py}
         {vector.py}
-        matrix.py
-            %i want to use numpy because it is really good stuff
-            %i also want to write my own stuff because i want to learn and i
-            want the code to be mine
         unit_conversion.py
             %https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
             %https://social.msdn.microsoft.com/Forums/en-US/f45acc04-c5b9-4c04-af42-1657ea3f6105/need-help-with-unit-conversion-class?forum=csharpgeneral
@@ -30,7 +26,12 @@ ref - reference from another library
             %i think the latter appeals to me more but it will take much much
             longer
             %mine also might be slower because numpy uses C libraries
-            %what do i run here; LU Decomposition, Cholesky, Frontal, one of each? 
+            %what do i run here; LU Decomposition, Cholesky, Frontal, one of each?
+            %Frontal Solver Papers (for when I get around to it):
+            %Irons, B. M., 1970. A frontal solution scheme for finite element analysis. Int. J. Numer. Methods Eng. 2, 5--32
+            %Duff, I.S. , Erisman, A. M. , Reid, J.K. 1986. Direct methods for sparse matrices, Oxford University Press, Inc., New York, NY
+            %Davis, T. (2006). Direct Methods for Sparse Linear Systems. Fundamentals of Algorithms. SIAM, Philadelphia.
+            % The Multifrontal Method for Sparse Matrix Solution: Theory and Practice, Joseph W. H. Liu, SIAM Review, Vol. 34, No. 1 (Mar., 1992), pp. 82-109 
         stress_tensor.py
         strain_tensor.py
     /geometry
