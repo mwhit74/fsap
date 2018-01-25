@@ -1,5 +1,5 @@
 import unittest
-from fsap.utils import point as pt
+from fsap.geom import point as pt
 
 class Point2DTest(unittest.TestCase):
     def setUp(self):
