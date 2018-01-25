@@ -27,7 +27,7 @@ ref - reference from another library
             % The Multifrontal Method for Sparse Matrix Solution: Theory and Practice, Joseph W. H. Liu, SIAM Review, Vol. 34, No. 1 (Mar., 1992), pp. 82-109 
         stress_tensor.py
         strain_tensor.py
-    /geometry
+    /geom
         point.py (2D and 3D)
             *documentation
             *unit testing
@@ -37,7 +37,7 @@ ref - reference from another library
     /input (parsing input)
         interperter based parsing
         user_input_verification
-    /material
+    /matl
         matl_base class
             %really this is just a dictonary of points
             %function to interpolate
@@ -46,7 +46,7 @@ ref - reference from another library
         matl_steel class
         matl_concrete class
         %would some kind of matrix be useable here
-    /section_property
+    /sepr
         sp_base class
             %the following properties require a more complex calculation
             %i do not know how to do it at this time
@@ -65,7 +65,7 @@ ref - reference from another library
         sp_round_tube class
         sp_rect_tube
         sp_user_defined class
-    /stiffness
+    /stif
         /axial_stiffness
             axial_k_matrix class
             compression only
@@ -94,13 +94,13 @@ ref - reference from another library
             %multi-step static - think mlob - load on structure>solve structure
             %influence line/surface
             %LU decomposition -> iterate through RHS with a unit load in each DOF, will reduce computation time -> save shear, moment, and displacement results at all nodes for each unit load -> influence line
-    /analysis
+    /anen
         element.py
             %class to organize element level properties
             %will hold geometry class instance, mat'l class instance, section prop class instance, section orientation, section offset, element stiffness matrix, discretization, geometric stiffness matrix(?), mass stiffness matrix(?), local to global transformation maxtrix
         model.py
             %assemble global stiffness matrix
             %run analysis
-    /output
+    /outp
 
 
