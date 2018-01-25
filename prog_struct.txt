@@ -6,13 +6,6 @@ ref - reference from another library
 
 /fsap (free structural analysis package)
     /utils
-        point.py (2D and 3D)
-            *documentation
-            *unit testing
-        line.py
-        {plane.py}
-        {volume.py}
-        {vector.py}
         unit_conversion.py
             %https://www.codeproject.com/Articles/23087/Measurement-Unit-Conversion-Library
             %https://social.msdn.microsoft.com/Forums/en-US/f45acc04-c5b9-4c04-af42-1657ea3f6105/need-help-with-unit-conversion-class?forum=csharpgeneral
@@ -35,11 +28,12 @@ ref - reference from another library
         stress_tensor.py
         strain_tensor.py
     /geometry
-        node class 
-        frame class
-        link class
-        {thin_plate class}
-        {thick_plate class}
+        point.py (2D and 3D)
+            *documentation
+            *unit testing
+        line.py
+        {plane.py}
+        {volume.py}
     /input (parsing input)
         interperter based parsing
         user_input_verification
@@ -54,8 +48,12 @@ ref - reference from another library
         %would some kind of matrix be useable here
     /section_property
         sp_base class
-            %correct shear area for general shape
-            %correct torsional constant for general shape
+            %the following properties require a more complex calculation
+            %i do not know how to do it at this time
+            %therefore they will be estimated for known shapes
+            %otherwise the user will be required to provide them
+                %correct shear area for general shape
+                %correct torsional constant for general shape
             {plastic}
             {correct plastic section modulus for general shape}
             {seperate module for independent use}
@@ -67,14 +65,24 @@ ref - reference from another library
         sp_round_tube class
         sp_rect_tube
         sp_user_defined class
-    /analysis
-        /truss
+    /stiffness
+        /axial_stiffness
             axial_k_matrix class
-        /plane_frame
+            compression only
+            tension only
+        /2D_thin_beam
             axial_1Dbending_shear_k_matrix class
-        /space_frame
+            %doesn't account for shear deformation
+        /2D_thick_beam
+            axial_1Dbending_shear_k_matrix class
+            %accounts for shear deformation
+        /3D_thin_beam
             axial_2Dbending_shear_torsion_k_matrix.py
-                %for shear deformation see Cook Book
+            %doesn't account for shear deformation
+        /3D_thick_beam
+            axial_2Dbending_shear_torsion_k_matrix.py 
+            %accounts for shear deformation
+            %for shear deformation see Cook Book
         {/soil_spring}
         {/user_defined}
     /load
@@ -86,16 +94,13 @@ ref - reference from another library
             %multi-step static - think mlob - load on structure>solve structure
             %influence line/surface
             %LU decomposition -> iterate through RHS with a unit load in each DOF, will reduce computation time -> save shear, moment, and displacement results at all nodes for each unit load -> influence line
-    /structural analysis engine
-        member.py
+    /analysis
+        element.py
             %class to organize element level properties
             %will hold geometry class instance, mat'l class instance, section prop class instance, section orientation, section offset, element stiffness matrix, discretization, geometric stiffness matrix(?), mass stiffness matrix(?), local to global transformation maxtrix
         model.py
             %assemble global stiffness matrix
             %run analysis
-    /physics engine
-        model.py
-            %i think this will come in with the mass stiffness matrix; still learning about it
     /output
 
 
