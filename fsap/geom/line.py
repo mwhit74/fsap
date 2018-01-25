@@ -1,14 +1,14 @@
 import math
 
-"
+"""
 Line class
-"
+"""
 
 class Line2D:
-    "Class to represent a line in space."
+    """Class to represent a line in space."""
 
     def __init__(self, pt1, pt2):
-        "Initialize the class arguments pt1 and pt2.
+        """Initialize the class arguments pt1 and pt2.
 
         Args:
             pt1 (Point2D): first point
@@ -22,7 +22,7 @@ class Line2D:
 
     def __str__(self):
         """String representation of a line."""
-        return "".format(self.pt1.x, self.pt1.y, self.pt2.x, self.pt2.y)
+        return "({0},{1}) ({2},{3})".format(self.pt1.x, self.pt1.y, self.pt2.x, self.pt2.y)
 
     def length(self):
         """Calculate the length of a line."""
@@ -31,10 +31,10 @@ class Line2D:
 
 
 class Line3D:
-    "Class to represent a line in space."
+    """Class to represent a line in space."""
 
     def __init__(self, pt1, pt2):
-        "Initialize the class arguments pt1 and pt2.
+        """Initialize the class arguments pt1 and pt2.
 
         Args:
             pt1 (Point3D): first point
@@ -48,7 +48,7 @@ class Line3D:
 
     def __str__(self):
         """String representation of a line."""
-        return "".format(self.pt1.x, self.pt1.y, self.pt1.z,
+        return "({0},{1},{2}) ({3},{4},{5})".format(self.pt1.x, self.pt1.y, self.pt1.z,
                          self.pt2.x, self.pt2.y, self.pt2.z)
 
     def length(self):
