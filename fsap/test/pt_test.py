@@ -1,5 +1,5 @@
 import unittest
-from fsap.utils import point as pt
+from fsap.geom import point as pt
 
 class Point2DTest(unittest.TestCase):
     def setUp(self):
@@ -15,7 +15,7 @@ class Point2DTest(unittest.TestCase):
         self.assertEqual(self.two_d_pt.y, 4.5, 'Incorrect y coord')
 
     def test_string(self):
-        self.assertEqual(str(self.two_d_pt), '2.300 4.500', 'Incorrect string point')
+        self.assertEqual(str(self.two_d_pt), '(2.300,4.500)', 'Incorrect string point')
 
     def test_coord(self):
         self.assertEqual(self.two_d_pt.cc()[0], 2.3, 'Incorrect tuple')
@@ -47,7 +47,7 @@ class Point3DTest(unittest.TestCase):
         self.assertEqual(self.three_d_pt.z, 9.4, 'Incorrect z coord')
 
     def test_string(self):
-        self.assertEqual(str(self.three_d_pt), '2.300 4.500 9.400', 'Incorrect string point')
+        self.assertEqual(str(self.three_d_pt), '(2.300,4.500,9.400)', 'Incorrect string point')
 
     def test_coord(self):
         self.assertEqual(self.three_d_pt.cc()[0], 2.3, 'Incorrect tuple')

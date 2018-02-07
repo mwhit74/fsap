@@ -1,0 +1,8 @@
+run test from this level
+
+python -m unittest fsap.test.file_test
+
+if error is something along the lines of "AttributeError: 'module' object has no
+attribute 'sp_test'" --> go check the module refereces in the test file and any
+files that the test file is referencing. it is a shitty, undescriptive error
+that is less than help

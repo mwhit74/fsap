@@ -1,5 +1,5 @@
 import unittest
-from fsap.section_property import section_property as sp
+from fsap.sepr import section_property as sp
 
 class SectionPropertyTest(unittest.TestCase):
     def setUp(self):

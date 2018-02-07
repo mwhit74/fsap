@@ -1,4 +1,4 @@
-from fsap.utils.point import Point2D
+from fsap.geom.point import Point2D
 import math
 import functools
 import pdb
@@ -365,4 +365,4 @@ class SectionProperty:
         return var
 
 
-class RectSectionPropety(SectionProperty):
+#class RectSectionPropety(SectionProperty):
