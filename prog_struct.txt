@@ -54,10 +54,24 @@ ref - reference from another library
     /section_property
         sp_base class
             %correct shear area for general shape
-            %correct torsional constant for general shape
+            %correct polar moment of inertia for general shape
             {plastic}
             {correct plastic section modulus for general shape}
             {seperate module for independent use}
+
+            %apparently shear area for general shape is difficult to calculate,
+            %will require a lot more research
+
+            %polar moment of inertia for a general shape is also difficult to
+            %calculate, will require a lot more research
+
+            %i think i understand the basic concepts of doing each of the shear
+            %area and polar moment of inertia calculations it just requires some
+            %complex algorithms that i do not know or understand at this point
+
+            %for the time being i am going to calculate approximate those values for the
+            %known shapes, for a more generic cross-section the user will be
+            %required to input that information
         sp_rectangle class
         sp_circle class
         sp_i_shape class
@@ -84,17 +98,24 @@ ref - reference from another library
         {load_moving class}
             %multi-step static - think mlob - load on structure>solve structure
             %influence line/surface
-            %LU decomposition -> iterate through RHS with a unit load in each DOF, will reduce computation time -> save shear, moment, and displacement results at all nodes for each unit load -> influence line
+            %LU decomposition -> iterate through RHS with a unit load in each DOF,
+            %will reduce computation time -> save shear, moment, and displacement 
+            %results at all nodes for each unit load -> influence line
     /structural analysis engine
+        solver.py
+            %use frontal solver or gauss elimination
+            %maybe write gauss elimination first and while doing research on
+            %frontal solver; then write frontal solver and replace or agument
+            %with the frontal solver
         member.py
             %class to organize element level properties
-            %will hold geometry class instance, mat'l class instance, section prop class instance, section orientation, section offset, element stiffness matrix, discretization, geometric stiffness matrix(?), mass stiffness matrix(?), local to global transformation maxtrix
+            %will hold geometry class instance, mat'l class instance, 
+            %section prop class instance, section orientation, section offset,
+            %element stiffness matrix, discretization, geometric stiffness matrix(?),
+            %mass stiffness matrix(?), local to global transformation maxtrix
         model.py
             %assemble global stiffness matrix
             %run analysis
-    /physics engine
-        model.py
-            %i think this will come in with the mass stiffness matrix; still learning about it
     /output
 
 
