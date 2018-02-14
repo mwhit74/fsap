@@ -4,12 +4,14 @@ def read_input(path):
     
     ifile = open(path, 'r')
     
-    read_joint(data)
-    read_support(data)
-    read_matlprop(data)
-    read_sectprop(data)
-    read_element(data)
-    read_load(data)
+    jt = read_joint(data)
+    sup = read_support(data)
+    matl = read_matlprop(data)
+    sect = read_sectprop(data)
+    elem = read_element(data)
+    load = read_load(data)
+
+    return jt, sup, matl, sect, elem, load
 
 
 def read_joint(data):
@@ -56,8 +58,32 @@ def read_sectprop(data):
         A = float(text)
         sp.append(A)
 
+    return sp
+
 
 def read_element(data):
+    elem = []
+    ne = int(data.readline())
+    for i in range(ne):
+        text = data.readline()
+        element = int(text.split(",")[0])
+        beg = int(text.split(",")[1])
+        end = int(text.split(",")[2])
+        matl = int(text.split(",")[3])
+        sp = int(text.split(",")[4])
+        elem.append((element, beg, end, matl,sp))
+
+    return elem
 
 
 def read_load(data):
+    load = []
+    nl = int(data.readline())
+    for i in range(nl):
+        text = data.readline()
+        jt = int(text.split(",")[0])
+        fx = float(text.split(",")[1])
+        fy = float(text.split(",")[2])
+        load.append((jt, fx, fy))
+
+    return load
