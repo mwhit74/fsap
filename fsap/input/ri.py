@@ -22,7 +22,7 @@ def read_joint(data):
         joint_number = int(text.split(",")[0])
         x_coord = float(text.split(",")[1])
         y_coord = float(text.split(",")[2])
-        jt.append((x_coord,y_coord))
+        jt.append((joint_number,x_coord,y_coord))
 
     return jt
 
