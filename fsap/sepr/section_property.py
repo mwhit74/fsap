@@ -365,4 +365,7 @@ class SectionProperty:
         return var
 
 
+class UserDefinedSectionProperty(SectionProperty):
+    def __init__(
+
 #class RectSectionPropety(SectionProperty):
