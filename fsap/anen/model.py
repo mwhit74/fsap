@@ -50,5 +50,12 @@ def scv(sup, num_scj, num_jt, num_dof):
 def assemble_stiffness(num_dof, num_scj):
     s = np.empty(num_dof, num_dof)
     gk = np.zeros(2*num_scj, 2*num_scj)
-    for im in mprp[0]:
-        jb = mprp[im][
+    for im in range(len(elem)):
+        jb = elem[im][1]
+        je = elem[im][2]
+        i = elem[im][3]
+        a = sepr[i]
+        i = elem[im][4]
+        e = sect[i]
+        xb = 
+

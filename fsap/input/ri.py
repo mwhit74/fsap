@@ -15,15 +15,15 @@ def read_input(path):
 
 
 def read_joint(data):
-    jt = []
+    jt = {}
     njt = int(data.readline())
     for i in range(njt):
         text = data.readline()
         joint_number = int(text.split(",")[0])
         x_coord = float(text.split(",")[1])
         y_coord = float(text.split(",")[2])
-        jt.append((joint_number,x_coord,y_coord))
-
+        jt[joint_number] = (x_coord, y_coord)
+    
     return jt
 
 
