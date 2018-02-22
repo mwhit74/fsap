@@ -1,6 +1,6 @@
 # joints
-joint number, x1, y1
-joint number, x2, y2
+x1, y1
+x2, y2
 # supports
 joint number, ux, uy
 joint number, ux, uy
@@ -11,8 +11,8 @@ E2
 A1
 A2
 # members
-member number, beg joint, end joint, sect prop id, matl prop id
-member number, beg joint, end joint, sect prop id, matl prop id
+beg joint, end joint, sect prop id, matl prop id
+beg joint, end joint, sect prop id, matl prop id
 # loads
 joint, FX, FY
 joint, FX, FY

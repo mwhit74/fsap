@@ -15,15 +15,13 @@ def read_input(path):
 
 
 def read_joint(data):
-    jt = {}
+    jt = []
     njt = int(data.readline())
     for i in range(njt):
         text = data.readline()
-        joint_number = int(text.split(",")[0])
         x_coord = float(text.split(",")[1])
         y_coord = float(text.split(",")[2])
-        jt[joint_number] = (x_coord, y_coord)
-    
+        jt.append(x_coord, y_coord) 
     return jt
 
 
@@ -67,12 +65,11 @@ def read_element(data):
     ne = int(data.readline())
     for i in range(ne):
         text = data.readline()
-        element = int(text.split(",")[0])
         beg = int(text.split(",")[1])
         end = int(text.split(",")[2])
         matl = int(text.split(",")[3])
         sp = int(text.split(",")[4])
-        elem.append((element, beg, end, matl,sp))
+        elem.append((beg, end, matl,sp))
 
     return elem
 
