@@ -39,6 +39,22 @@ def num_dof(sup, num_scj, num_jt):
 
 def scv(sup, num_scj, num_jt, num_dof):
     """Generate structure coordinate vector.
+
+    The structure coordinate vector is generated based on the number of
+    restrained and unstrained DOFs. The purpose is to assign the DOF numbers
+    to the correct joints and keep track of the assignment. 
+
+    The restrained and unrestrained DOFs can also be though of as structure
+    coordinates.
+
+    The number of rows is equal to the number of structure coordinates per
+    joint times the number of joints in the structure. 
+
+    The structure coordinates relate the member stiffness coefficient matrix
+    (in global coordinates) to their corresponding location in the structure
+    stiffness coefficient matrix. For members meeting at a joint the
+    stiffnesses of each member will be added together in structure stiffness
+    matrix for each unrestrained DOF at that joint. 
     
     Args:
         sup (list): 2D array of joint number, x support condition, y support
@@ -54,12 +70,20 @@ def scv(sup, num_scj, num_jt, num_dof):
     """
 
     str_cv = np.empty(num_jt*num_scj)
-    j = 0
-    k = num_dof
+    j = 0 #numbers for unrestrained DOFs
+    k = num_dof #number for restrained DOFs
     for i in range(num_jt):
+        #if a joint is in the support matrix
+        #the numbering of structure coordinates changes
+        #otherwise it is handled in a straight forward manner
         if i in sup[0]:
             for x in range(num_scj):
+                #location of structure coordinate in vector
+                #it works but it does not provide much flexibility
                 y = (i - 1)*num_scj + x
+                #if a joint has a support the numbers for restrained DOFs
+                #are used for the restrained DOFs and otherwise the numbers
+                #for unrestrained DOFs are used
                 if sup[i][x] == 1:
                     str_cv[y] = k
                     k += 1
