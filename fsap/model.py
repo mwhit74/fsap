@@ -120,7 +120,7 @@ def assemble_stiffness(num_dof, num_scj, elem):
 
 
     Args:
-        ndof (int): number of unrestrained degrees of freedom of the
+        num_dof (int): number of unrestrained degrees of freedom of the
                     structure
         num_scj (int): number of structure coordinates per joint; number of
                        degrees of freedom per joint
@@ -145,14 +145,32 @@ def assemble_stiffness(num_dof, num_scj, elem):
         xe = jt[im][0]
         ye = jt[im][1]
         bl = math.sqrt(math.exp(xe-xb,2) + math.exp(ye-yb,2))
-        c = (xe-xb)/bl
-        s = (ye-yb/bl
+        co = (xe-xb)/bl
+        si = (ye-yb/bl
 
-        mstiffg(e,a,bl,c,s,gk)
+        mstiffg(e,a,bl,co,si,gk)
         stores()
 
-def mstiffg(e,a,bl,c,s,gk):
-    """Member global stiffness matrix."""
+def mstiffg(e,a,bl,co,si,gk):
+    """Assemble member global stiffness matrix.
+    
+    Args:
+        e (float): modulus of elasticity
+        a (float): cross-section area
+        bl (float): member length
+        co (float): cosine of angle between member and horizontal; + ccw from
+                   x-axis
+        si (float): sine of angle between member and horizontal; + ccw from
+                    x-axis
+        gk (numpy array): member global stiffness matrix; initialized as 0
+                          matrix with dimensions of member stiffness matrix
+
+    Returns:
+        None
+
+    Notes:
+        Populates member gloabl stiffness matrix by over-write zero entries.
+    """
 
     eal = e*a/bl
     c2 = math.pow(c,2)
@@ -184,9 +202,67 @@ def mstiffg(e,a,bl,c,s,gk):
     gk[3][3] = z2
 
 def stores(jb, je, num_scj, num_dof, scv, gk, s):
+    """Adds elements of member global stiffness to structure stiffness matrix.
+
+    Step down rows first then across columns. The rows represent the forces in
+    the directions of the DOFs. The columns represent the displacements in the
+    directions of the DOFs. 
+
+    When the row number is less than the number of coordinates per joint it is
+    representing a DOF at the beginning of a member. When the row number is
+    greater a DOF at then end of a member. The index location in the structure
+    coordinate vector is calculated based on the row number. The code number 
+    which represents the DOF of the structure is located with the calculated 
+    index location. If the code number is less than the number of unrestrained
+    DOFs then a similar process is carried out for the column number. If it
+    found that code number for the column is also less than the number of
+    restrained DOFs then the member global stiffness coefficient at the local of
+    the row and column is added to the structure stiffness coefficient located 
+    at the associated code number location. 
+
+    Args:
+        jb (int): begin joint id
+        je (int): end joint id
+        num_scj (int): number of structure coordinates per joint; number of
+                       degrees of freedom per joint
+        num_dof (int): number of unrestrained degrees of freedom of the
+                       structure
+        str_cv (numpy array): 1D array (vector) of the numbered DOFs for
+                              the entire structure to the joints
+        gk (numpy array): 2D array representing global member stiffness matrix
+        s (numpy array): 2D array representing assembled structure stiffness 
+                         matrix; initialized as empty array with dimensions of
+                         the structure stiffness matrix
+    Returns:
+        None
+
+    Notes:
+        Populates structure stiffness matrix
+    """
+    #stepping down rows
+    #i is the row
     for i in range(2*num_scj):
+        #if i <= num_scj then i is specific DOF for begin joint
+        #else i is specific DOF for end joint 
         if i <= num_scj:
-            y = (jb - 1)*num_scj + 1
+            y = (jb - 1)*num_scj + i
         else:
+            #(i - num_scj) is accounting for the offset
             y = (je - 1)*num_scj + (i - num_scj)
+        #y is the location of the code number in the structure coordinate vector
+        n1 = scv[y]
+        #if n1 is an unrestrained DOF
+        if n1 <= num_dof:
+            #stepping across rows
+            #j is the column
+            for j in range(2*num_scj):
+                if j <= num_scj:
+                    z = (jb - 1)*num_scj + j
+                else:
+                    z = (je - 1)*num_scj + (j - num_scj)
+                n2 = scv[z]
+                #if n2 is an unrestrained DOF
+                if n2 <= num_dof:
+                    s[n1][n2] = s[n1][n2] + gk[i,j]
+
 
