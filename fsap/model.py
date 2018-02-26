@@ -23,7 +23,8 @@ def num_dof(sup, num_scj, num_jt):
         num_jt (int): number of joints in the structure
 
     Returns:
-        ndof (int): number of degrees of freedom of the structure
+        ndof (int): number of unrestrained degrees of freedom of the
+                    structure
 
     Notes:
         num_reacs (int): number of support reactions of the structure
@@ -62,7 +63,8 @@ def scv(sup, num_scj, num_jt, num_dof):
         num_scj (int): number of structure coordinates per joint; number of
                        degrees of freedom per joint
         num_jt (int): number of joints in the structure
-        num_dof (int): number of degrees of freedom of the structure
+        ndof (int): number of unrestrained degrees of freedom of the
+                    structure
 
     Returns:
         str_cv (numpy array): 1D array (vector) of the numbered DOFs for
@@ -98,8 +100,36 @@ def scv(sup, num_scj, num_jt, num_dof):
 
      return str_cv
 
-def assemble_stiffness(num_dof, num_scj):
-    """Assemble structure stiffness matrix."""
+def assemble_stiffness(num_dof, num_scj, elem):
+    """Assemble structure stiffness matrix.
+   
+    Gets the member connectivity data, member material property assignment,
+    and member section property assignment from the 'elem' matrix. 
+
+    Looks up the coordinates of the member begin and end joints. Calculates
+    the length of the member, the sin and cos of the angle wrt the
+    horizontal. 
+    
+    The length and sin/cos information will be used along with
+    the material and section property data to generate the member stiffness
+    matrix in global coordinates. The mstiffg function handles the assembly
+    of of the member stiffness matrix in global coordinates.
+
+    
+
+
+
+    Args:
+        ndof (int): number of unrestrained degrees of freedom of the
+                    structure
+        num_scj (int): number of structure coordinates per joint; number of
+                       degrees of freedom per joint
+        elem (list): user input member connectivity, material property
+                     assignment, and section property assignment
+
+    Returns:
+        s (numpy array): assembled structure stiffness matrix
+    """
 
     s = np.empty(num_dof, num_dof)
     gk = np.zeros(2*num_scj, 2*num_scj)
