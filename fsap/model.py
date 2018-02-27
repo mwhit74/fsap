@@ -149,7 +149,7 @@ def assemble_stiffness(num_dof, num_scj, elem):
         si = (ye-yb/bl
 
         mstiffg(e,a,bl,co,si,gk)
-        stores()
+        stores(jb, je, num_scj, num_dof, scv, gk, s)
 
 def mstiffg(e,a,bl,co,si,gk):
     """Assemble member global stiffness matrix.
@@ -242,8 +242,8 @@ def stores(jb, je, num_scj, num_dof, scv, gk, s):
     #stepping down rows
     #i is the row
     for i in range(2*num_scj):
-        #if i <= num_scj then i is specific DOF for begin joint
-        #else i is specific DOF for end joint 
+        #if i <= num_scj then i member coordinate for begin joint
+        #else i is member coordinate for end joint 
         if i <= num_scj:
             y = (jb - 1)*num_scj + i
         else:
@@ -265,4 +265,10 @@ def stores(jb, je, num_scj, num_dof, scv, gk, s):
                 if n2 <= num_dof:
                     s[n1][n2] = s[n1][n2] + gk[i,j]
 
+
+def jlv(num_dof, num_scj, scv):
+    """Assemble the joint load vector.
+
+
+    """
 
