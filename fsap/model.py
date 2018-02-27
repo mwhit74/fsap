@@ -38,7 +38,7 @@ def num_dof(sup, num_scj, num_jt):
     ndof = num_scj*num_jt - num_reacs
     return ndof
 
-def scv(sup, num_scj, num_jt, num_dof):
+def str_coord_vector(sup, num_scj, num_jt, ndof):
     """Generate structure coordinate vector.
 
     The structure coordinate vector is generated based on the number of
@@ -67,13 +67,13 @@ def scv(sup, num_scj, num_jt, num_dof):
                     structure
 
     Returns:
-        str_cv (numpy array): 1D array (vector) of the numbered DOFs for
+        scv (numpy array): 1D array (vector) of the numbered DOFs for
                               the entire structure to the joints
     """
 
-    str_cv = np.empty(num_jt*num_scj)
+    scv = np.empty(num_jt*num_scj)
     j = 0 #numbers for unrestrained DOFs
-    k = num_dof #number for restrained DOFs
+    k = ndof #number for restrained DOFs
     for i in range(num_jt):
         #if a joint is in the support matrix
         #the numbering of structure coordinates changes
@@ -87,20 +87,20 @@ def scv(sup, num_scj, num_jt, num_dof):
                 #are used for the restrained DOFs and otherwise the numbers
                 #for unrestrained DOFs are used
                 if sup[i][x] == 1:
-                    str_cv[y] = k
+                    scv[y] = k
                     k += 1
                 else:
-                    str_cv[y] = j
+                    scv[y] = j
                     j += 1
         else:
             for x in range(num_scj):
                 y = (i - 1)*num_scj + x
-                str_cv[y] = j
+                scv[y] = j
                 j += 1
 
-     return str_cv
+     return scv
 
-def assemble_stiffness(num_dof, num_scj, elem):
+def assemble_stiffness(ndof, num_scj, elem):
     """Assemble structure stiffness matrix.
    
     Gets the member connectivity data, member material property assignment,
@@ -120,8 +120,8 @@ def assemble_stiffness(num_dof, num_scj, elem):
 
 
     Args:
-        num_dof (int): number of unrestrained degrees of freedom of the
-                    structure
+        ndof (int): number of unrestrained degrees of freedom of the
+                    struture
         num_scj (int): number of structure coordinates per joint; number of
                        degrees of freedom per joint
         elem (list): user input member connectivity, material property
@@ -131,7 +131,7 @@ def assemble_stiffness(num_dof, num_scj, elem):
         s (numpy array): assembled structure stiffness matrix
     """
 
-    s = np.empty(num_dof, num_dof)
+    s = np.empty(ndof, ndof)
     gk = np.zeros(2*num_scj, 2*num_scj)
     for im in range(len(elem)):
         jb = elem[im][0]
@@ -149,7 +149,7 @@ def assemble_stiffness(num_dof, num_scj, elem):
         si = (ye-yb/bl
 
         mstiffg(e,a,bl,co,si,gk)
-        stores(jb, je, num_scj, num_dof, scv, gk, s)
+        stores(jb, je, num_scj, ndof, scv, gk, s)
 
 def mstiffg(e,a,bl,co,si,gk):
     """Assemble member global stiffness matrix.
@@ -201,7 +201,7 @@ def mstiffg(e,a,bl,co,si,gk):
     gk[2][3] = z3
     gk[3][3] = z2
 
-def stores(jb, je, num_scj, num_dof, scv, gk, s):
+def stores(jb, je, num_scj, ndof, scv, gk, s):
     """Adds elements of member global stiffness to structure stiffness matrix.
 
     Step down rows first then across columns. The rows represent the forces in
@@ -225,9 +225,9 @@ def stores(jb, je, num_scj, num_dof, scv, gk, s):
         je (int): end joint id
         num_scj (int): number of structure coordinates per joint; number of
                        degrees of freedom per joint
-        num_dof (int): number of unrestrained degrees of freedom of the
+        ndof (int): number of unrestrained degrees of freedom of the
                        structure
-        str_cv (numpy array): 1D array (vector) of the numbered DOFs for
+        scv (numpy array): 1D array (vector) of the numbered DOFs for
                               the entire structure to the joints
         gk (numpy array): 2D array representing global member stiffness matrix
         s (numpy array): 2D array representing assembled structure stiffness 
@@ -241,34 +241,49 @@ def stores(jb, je, num_scj, num_dof, scv, gk, s):
     """
     #stepping down rows
     #i is the row
-    for i in range(2*num_scj):
+    for member_coord_row in range(2*num_scj):
         #if i <= num_scj then i member coordinate for begin joint
         #else i is member coordinate for end joint 
-        if i <= num_scj:
-            y = (jb - 1)*num_scj + i
+        if member_coord_row <= num_scj:
+            str_coord_row_index = (jb - 1)*num_scj + member_coord_row
         else:
             #(i - num_scj) is accounting for the offset
-            y = (je - 1)*num_scj + (i - num_scj)
-        #y is the location of the code number in the structure coordinate vector
-        n1 = scv[y]
+            str_coord_row_index = (je - 1)*num_scj + (member_coord_row - num_scj)
+        #y is the location of the structure coordinate in the structure 
+        #coordinate vector
+        str_coord_row = scv[str_coord_row_index]
         #if n1 is an unrestrained DOF
-        if n1 <= num_dof:
+        if str_coord_row <= ndof:
             #stepping across rows
             #j is the column
-            for j in range(2*num_scj):
-                if j <= num_scj:
-                    z = (jb - 1)*num_scj + j
+            for member_coord_col in range(2*num_scj):
+                if member_coord_col <= num_scj:
+                    str_coord_col_index = (jb - 1)*num_scj + member_coord_col
                 else:
-                    z = (je - 1)*num_scj + (j - num_scj)
-                n2 = scv[z]
+                    str_coord_col_index = (je - 1)*num_scj + (member_coord_col - num_scj)
+                str_coord_col = scv[str_coord_col_index]
                 #if n2 is an unrestrained DOF
-                if n2 <= num_dof:
-                    s[n1][n2] = s[n1][n2] + gk[i,j]
+                if str_coord_col <= ndof:
+                    s[str_coord_row][str_coord_col] = (s[str_coord_row][str_coord_col] +
+                                                      gk[member_coord_row][member_coord_col])
 
 
-def jlv(num_dof, num_scj, scv):
+def joint_load_vector(ndof, num_scj, scv, load):
     """Assemble the joint load vector.
 
 
     """
+    p = np.zeros(ndof)
+    for jt_index in range(len(load)):
+        jt = load[jt_index]
+        str_coord_index = (jt - 1)*num_scj + 1
+        for load_index in range(num_scj):
+            str_coord_index = str_coord_index + 1
+            str_coord = scv[str_coord_index]
+            if str_coord <= ndof:
+                p[str_coord] = p[str_coord] + load[jt_index,load_index+1]
+
+    return p
+
+
 
