@@ -2,19 +2,21 @@
 
 import ri
 import model
-import naf.linalg.lu 
+import naf.linalg.lu as lu
 
-input_file = r''
+input_file = (r'//kcow00/Home/mwhitten/Python' + 
+              r'/remote_repos/fsap/fsap/test' +
+              r'/sample_input_file.txt')
 
 jt, sup, matl, sect, elem, load = ri.read_input(input_file)
 
 num_scj = 2 #truss
 num_jt = len(jt)
 
-ndof = num_dof(sup, num_scj, num_jt)
-scv = str_coord_vector(sup, num_scj, num_jt, ndof)
-sk = assemble_stiffness(ndof, num_scj, elem)
-p = joint_load_vector(ndof, num_scj, scv, load)
+ndof = model.num_dof(sup, num_scj, num_jt)
+scv = model.str_coord_vector(sup, num_scj, num_jt, ndof)
+sk = model.assemble_stiffness(ndof, num_scj, elem)
+p = model.joint_load_vector(ndof, num_scj, scv, load)
 
 LU, ov = lu.lu_decomp(sk)
 x = lu.lu_solve(LU, ov, p)

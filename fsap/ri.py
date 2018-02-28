@@ -19,9 +19,9 @@ def read_joint(data):
     njt = int(data.readline())
     for i in range(njt):
         text = data.readline()
-        x_coord = float(text.split(",")[1])
-        y_coord = float(text.split(",")[2])
-        jt.append(x_coord, y_coord) 
+        x_coord = float(text.split(",")[0])
+        y_coord = float(text.split(",")[1])
+        jt.append((x_coord, y_coord)) 
     return jt
 
 
@@ -65,10 +65,10 @@ def read_element(data):
     ne = int(data.readline())
     for i in range(ne):
         text = data.readline()
-        beg = int(text.split(",")[1])
-        end = int(text.split(",")[2])
-        matl = int(text.split(",")[3])
-        sp = int(text.split(",")[4])
+        beg = int(text.split(",")[0])
+        end = int(text.split(",")[1])
+        matl = int(text.split(",")[2])
+        sp = int(text.split(",")[3])
         elem.append((beg, end, matl,sp))
 
     return elem

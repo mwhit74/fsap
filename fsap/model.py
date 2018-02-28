@@ -98,7 +98,7 @@ def str_coord_vector(sup, num_scj, num_jt, ndof):
                 scv[y] = j
                 j += 1
 
-     return scv
+    return scv
 
 def assemble_stiffness(ndof, num_scj, elem):
     """Assemble structure stiffness matrix.
@@ -146,7 +146,7 @@ def assemble_stiffness(ndof, num_scj, elem):
         ye = jt[im][1]
         bl = math.sqrt(math.exp(xe-xb,2) + math.exp(ye-yb,2))
         co = (xe-xb)/bl
-        si = (ye-yb/bl
+        si = (ye-yb)/bl
 
         mstiffg(e,a,bl,co,si,gk)
         stores(jb, je, num_scj, ndof, scv, gk, s)
