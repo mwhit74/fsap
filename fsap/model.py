@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 def num_dof(sup, num_scj, num_jt):
     """Calculate the number of degrees of freedom of the structure.
@@ -33,7 +34,7 @@ def num_dof(sup, num_scj, num_jt):
     num_reacs = 0
     for i in range(len(sup)):
         for j in range(2, num_scj+1):
-            if sup(i,j) == 1:
+            if sup[i][j] == 1:
                 num_reacs += 1
     ndof = num_scj*num_jt - num_reacs
     return ndof
@@ -100,7 +101,7 @@ def str_coord_vector(sup, num_scj, num_jt, ndof):
 
     return scv
 
-def assemble_stiffness(ndof, num_scj, elem):
+def assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem):
     """Assemble structure stiffness matrix.
    
     Gets the member connectivity data, member material property assignment,
@@ -131,20 +132,20 @@ def assemble_stiffness(ndof, num_scj, elem):
         s (numpy array): assembled structure stiffness matrix
     """
 
-    s = np.empty(ndof, ndof)
-    gk = np.zeros(2*num_scj, 2*num_scj)
+    s = np.empty([ndof, ndof])
+    gk = np.zeros([2*num_scj, 2*num_scj])
     for im in range(len(elem)):
         jb = elem[im][0]
         je = elem[im][1]
-        sp_id = elem[im][2]
-        a = sect[sp_id]
-        matl_id = elem[im][3]
-        e = matl[matl_id]
-        xb = jt[im][0]
-        yb = jt[im][1]
-        xe = jt[im][0]
-        ye = jt[im][1]
-        bl = math.sqrt(math.exp(xe-xb,2) + math.exp(ye-yb,2))
+        matl_id = elem[im][2]
+        e = matl[matl_id-1] #adjust index location for list
+        sp_id = elem[im][3]
+        a = sect[sp_id-1] #adjust index location for list
+        xb = jt[jb][0]
+        yb = jt[jb][1]
+        xe = jt[je][0]
+        ye = jt[je][1]
+        bl = math.sqrt(math.pow((xe-xb),2) + math.pow((ye-yb),2))
         co = (xe-xb)/bl
         si = (ye-yb)/bl
 
@@ -173,13 +174,13 @@ def mstiffg(e,a,bl,co,si,gk):
     """
 
     eal = e*a/bl
-    c2 = math.pow(c,2)
-    s2 = math.pow(s,2)
-    sc = s*c
+    co2 = math.pow(co,2)
+    si2 = math.pow(si,2)
+    sico = si*co
 
-    z1 = eal*c2
-    z2 = eal*s2
-    z3 = eal*sc
+    z1 = eal*co2
+    z2 = eal*si2
+    z3 = eal*sico
 
     gk[0][0] = z1
     gk[1][0] = z3
