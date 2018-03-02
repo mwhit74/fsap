@@ -18,6 +18,7 @@ print scv
 sk = model.assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem)
 print sk
 p = model.joint_load_vector(ndof, num_scj, scv, load)
+print p
 
 LU, ov = lu.lu_decomp(sk)
 x = lu.lu_solve(LU, ov, p)

@@ -137,7 +137,7 @@ def assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem):
         s (numpy array): assembled structure stiffness matrix
     """
 
-    s = np.empty([ndof, ndof])
+    s = np.zeros([ndof, ndof])
     gk = np.zeros([2*num_scj, 2*num_scj])
     for im in range(len(elem)):
         jb = elem[im][0]
@@ -297,7 +297,7 @@ def joint_load_vector(ndof, num_scj, scv, load):
             str_coord = scv[str_coord_index]
             if str_coord <= ndof:
                 p[str_coord-1] = p[str_coord-1] + load[x][load_index+1]
-
+    
     return p
 
 
