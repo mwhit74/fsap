@@ -11,8 +11,8 @@ E2
 A1
 A2
 # members
-beg joint, end joint, sect prop id, matl prop id
-beg joint, end joint, sect prop id, matl prop id
+beg joint, end joint, matl prop id, sect prop id
+beg joint, end joint, matl prop id, sect prop id
 # loads
 joint, FX, FY
 joint, FX, FY

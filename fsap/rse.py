@@ -12,11 +12,15 @@ num_scj = 2 #truss
 num_jt = len(jt)
 
 ndof = model.num_dof(sup, num_scj, num_jt)
+print "ndof " + str(ndof)
 scv = model.str_coord_vector(sup, num_scj, num_jt, ndof)
+print scv
 sk = model.assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem)
+print sk
 p = model.joint_load_vector(ndof, num_scj, scv, load)
 
 LU, ov = lu.lu_decomp(sk)
 x = lu.lu_solve(LU, ov, p)
+print x
 
 

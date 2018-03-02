@@ -33,7 +33,7 @@ def num_dof(sup, num_scj, num_jt):
     """
     num_reacs = 0
     for i in range(len(sup)):
-        for j in range(2, num_scj+1):
+        for j in range(1, num_scj+1):
             if sup[i][j] == 1:
                 num_reacs += 1
     ndof = num_scj*num_jt - num_reacs
@@ -71,33 +71,38 @@ def str_coord_vector(sup, num_scj, num_jt, ndof):
         scv (numpy array): 1D array (vector) of the numbered DOFs for
                               the entire structure to the joints
     """
-
-    scv = np.empty(num_jt*num_scj)
+    scv = np.empty(num_jt*num_scj, dtype='int64')
     j = 0 #numbers for unrestrained DOFs
     k = ndof #number for restrained DOFs
-    for i in range(num_jt):
+    # i is the assigned joint number
+    for i in range(1,num_jt+1):
         #if a joint is in the support matrix
         #the numbering of structure coordinates changes
         #otherwise it is handled in a straight forward manner
-        if i in sup[0]:
-            for x in range(num_scj):
-                #location of structure coordinate in vector
-                #it works but it does not provide much flexibility
-                y = (i - 1)*num_scj + x
-                #if a joint has a support the numbers for restrained DOFs
-                #are used for the restrained DOFs and otherwise the numbers
-                #for unrestrained DOFs are used
-                if sup[i][x] == 1:
-                    scv[y] = k
-                    k += 1
-                else:
-                    scv[y] = j
-                    j += 1
-        else:
-            for x in range(num_scj):
-                y = (i - 1)*num_scj + x
-                scv[y] = j
+        is_support = False
+        for z in range(len(sup)):
+            if i == sup[z][0]:
+                is_support = True
+
+                for x in range(1,num_scj+1):
+                    #location of structure coordinate in vector
+                    #it works but it does not provide much flexibility
+                    str_coord_index = (i-1)*num_scj + x - 1
+                    #if a joint has a support the numbers for restrained DOFs
+                    #are used for the restrained DOFs and otherwise the numbers
+                    #for unrestrained DOFs are used
+                    if sup[z][x] == 1:
+                        k += 1
+                        scv[str_coord_index] = k
+                    else:
+                        j += 1
+                        scv[str_coord_index] = j
+
+        if not is_support:
+            for x in range(1,num_scj+1):
+                str_coord_index = (i-1)*num_scj + x - 1
                 j += 1
+                scv[str_coord_index] = j
 
     return scv
 
@@ -141,16 +146,24 @@ def assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem):
         e = matl[matl_id-1] #adjust index location for list
         sp_id = elem[im][3]
         a = sect[sp_id-1] #adjust index location for list
-        xb = jt[jb][0]
-        yb = jt[jb][1]
-        xe = jt[je][0]
-        ye = jt[je][1]
+        xb = jt[jb-1][0]
+        yb = jt[jb-1][1]
+        xe = jt[je-1][0]
+        ye = jt[je-1][1]
         bl = math.sqrt(math.pow((xe-xb),2) + math.pow((ye-yb),2))
         co = (xe-xb)/bl
         si = (ye-yb)/bl
 
         mstiffg(e,a,bl,co,si,gk)
+        print e
+        print a
+        print bl
+        print co
+        print si
+        print gk
         stores(jb, je, num_scj, ndof, scv, gk, s)
+
+    return s
 
 def mstiffg(e,a,bl,co,si,gk):
     """Assemble member global stiffness matrix.
@@ -242,31 +255,32 @@ def stores(jb, je, num_scj, ndof, scv, gk, s):
     """
     #stepping down rows
     #i is the row
-    for member_coord_row in range(2*num_scj):
+    for member_coord_row in range(1,2*num_scj+1):
         #if i <= num_scj then i member coordinate for begin joint
         #else i is member coordinate for end joint 
         if member_coord_row <= num_scj:
-            str_coord_row_index = (jb - 1)*num_scj + member_coord_row
+            str_coord_row_index = (jb - 1)*num_scj + member_coord_row - 1
         else:
             #(i - num_scj) is accounting for the offset
-            str_coord_row_index = (je - 1)*num_scj + (member_coord_row - num_scj)
-        #y is the location of the structure coordinate in the structure 
-        #coordinate vector
-        str_coord_row = scv[str_coord_row_index]
+            str_coord_row_index = ((je - 1)*num_scj + 
+                                    (member_coord_row - num_scj - 1))
+        str_coord_row = scv[str_coord_row_index] 
         #if n1 is an unrestrained DOF
         if str_coord_row <= ndof:
             #stepping across rows
             #j is the column
-            for member_coord_col in range(2*num_scj):
+            for member_coord_col in range(1,2*num_scj+1):
                 if member_coord_col <= num_scj:
-                    str_coord_col_index = (jb - 1)*num_scj + member_coord_col
+                    str_coord_col_index = ((jb - 1)*num_scj + 
+                                            member_coord_col - 1)
                 else:
-                    str_coord_col_index = (je - 1)*num_scj + (member_coord_col - num_scj)
+                    str_coord_col_index = ((je - 1)*num_scj + 
+                                            (member_coord_col - num_scj - 1))
                 str_coord_col = scv[str_coord_col_index]
                 #if n2 is an unrestrained DOF
                 if str_coord_col <= ndof:
-                    s[str_coord_row][str_coord_col] = (s[str_coord_row][str_coord_col] +
-                                                      gk[member_coord_row][member_coord_col])
+                    s[str_coord_row-1][str_coord_col-1] = (s[str_coord_row-1][str_coord_col-1] +
+                                                      gk[member_coord_row-1][member_coord_col-1])
 
 
 def joint_load_vector(ndof, num_scj, scv, load):
@@ -275,14 +289,14 @@ def joint_load_vector(ndof, num_scj, scv, load):
 
     """
     p = np.zeros(ndof)
-    for jt_index in range(len(load)):
-        jt = load[jt_index]
-        str_coord_index = (jt - 1)*num_scj + 1
+    for x in range(len(load)):
+        jt = load[x][0]
+        str_coord_index = (jt - 1)*num_scj - 1
         for load_index in range(num_scj):
             str_coord_index = str_coord_index + 1
             str_coord = scv[str_coord_index]
             if str_coord <= ndof:
-                p[str_coord] = p[str_coord] + load[jt_index,load_index+1]
+                p[str_coord-1] = p[str_coord-1] + load[x][load_index+1]
 
     return p
 
