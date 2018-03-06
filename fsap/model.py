@@ -106,7 +106,26 @@ def str_coord_vector(sup, num_scj, num_jt, ndof):
 
     return scv
 
-def assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem):
+def member_properties(elem, matl, sect, jt):
+
+    jb = elem[im][0]
+    je = elem[im][1]
+    matl_id = elem[im][2]
+    e = matl[matl_id-1] #adjust index location for list
+    sp_id = elem[im][3]
+    a = sect[sp_id-1] #adjust index location for list
+    xb = jt[jb-1][0]
+    yb = jt[jb-1][1]
+    xe = jt[je-1][0]
+    ye = jt[je-1][1]
+    bl = math.sqrt(math.pow((xe-xb),2) + math.pow((ye-yb),2))
+    co = (xe-xb)/bl
+    si = (ye-yb)/bl
+
+    return jb, je, e, a, xb, yb, xe, ye, bl, co, si
+
+
+def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt, matl, sect, elem):
     """Assemble structure stiffness matrix.
    
     Gets the member connectivity data, member material property assignment,
@@ -137,35 +156,23 @@ def assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem):
         s (numpy array): assembled structure stiffness matrix
     """
 
-    s = np.zeros([ndof, ndof])
-    gk = np.zeros([2*num_scj, 2*num_scj])
+    s = np.zeros([ndof, ndof]) #structure stiffness matrix
+    gk = np.zeros([2*num_scj, 2*num_scj]) #member stiffness matrix in global
     for im in range(len(elem)):
-        jb = elem[im][0]
-        je = elem[im][1]
-        matl_id = elem[im][2]
-        e = matl[matl_id-1] #adjust index location for list
-        sp_id = elem[im][3]
-        a = sect[sp_id-1] #adjust index location for list
-        xb = jt[jb-1][0]
-        yb = jt[jb-1][1]
-        xe = jt[je-1][0]
-        ye = jt[je-1][1]
-        bl = math.sqrt(math.pow((xe-xb),2) + math.pow((ye-yb),2))
-        co = (xe-xb)/bl
-        si = (ye-yb)/bl
-
-        mstiffg(e,a,bl,co,si,gk)
+        (jb, je, e, a, xb, yb, 
+        xe, ye, bl, co, si) = member_properties(elem, matl, sect, jt)
+        member_global_stiffness_matrix(e,a,bl,co,si,gk)
         print e
         print a
         print bl
         print co
         print si
         print gk
-        stores(jb, je, num_scj, ndof, scv, gk, s)
+        store_structure_stiffness_matrix(jb, je, num_scj, ndof, scv, gk, s)
 
     return s
 
-def mstiffg(e,a,bl,co,si,gk):
+def member_global_stiffness_matrix(e,a,bl,co,si,gk):
     """Assemble member global stiffness matrix.
     
     Args:
@@ -215,7 +222,7 @@ def mstiffg(e,a,bl,co,si,gk):
     gk[2][3] = z3
     gk[3][3] = z2
 
-def stores(jb, je, num_scj, ndof, scv, gk, s):
+def store_structure_stiffness_matrix(jb, je, num_scj, ndof, scv, gk, s):
     """Adds elements of member global stiffness to structure stiffness matrix.
 
     Step down rows first then across columns. The rows represent the forces in
@@ -300,5 +307,57 @@ def joint_load_vector(ndof, num_scj, scv, load):
     
     return p
 
+
+def member_forces_disps_reacs(num_scj, elem, matl, sect, jt):
+    """Calculate the member forces and displacements, and support reactions.
+
+
+    """
+    mlsm = np.zeros(2*num_scj,2*num_scj) #member local stiffness matrix
+    mtm = np.zeros(2*num_scj,2*num_scj) #member transform matrix
+    mged = np.zeros(2*num_scj) #member global end disps
+    mled = np.zeros(2*num_scj) #member local end disps
+    mlef = np.zeros(2*num_scj) #member local end forces
+    mgef = np.zeros(2*num_scj) #member global end forces
+    reac = np.zeros(2*num_scj) #support reactions
+
+    for im in range(len(elem)):
+        (jb, je, e, a, xb, yb, 
+        xe, ye, bl, co, si) = member_properties(elem, matl, sect, jt)
+        member_global_disp()
+        member_transform_matrix()
+        member_local_disp()
+        member_local_stiffness_matrix()
+        member_local_forc()
+        member_global_forc()
+        sup_reac()
+
+
+def member_global_disp():
+    pass
+
+
+def member_transform_matrix():
+    pass
+
+
+def member_local_disp():
+    pass
+
+
+def member_local_stiffness_matrix():
+    pass
+
+
+def member_local_forc():
+    pass
+
+
+def member_global_forc():
+    pass
+
+
+def sup_reac():
+    pass
 
 
