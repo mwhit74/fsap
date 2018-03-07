@@ -125,7 +125,8 @@ def member_properties(elem, matl, sect, jt):
     return jb, je, e, a, xb, yb, xe, ye, bl, co, si
 
 
-def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt, matl, sect, elem):
+def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt, 
+                                        matl, sect, elem):
     """Assemble structure stiffness matrix.
    
     Gets the member connectivity data, member material property assignment,
@@ -308,7 +309,8 @@ def joint_load_vector(ndof, num_scj, scv, load):
     return p
 
 
-def member_forces_disps_reacs(num_scj, elem, matl, sect, jt):
+def member_forces_disps_reacs(num_dof, num_scj, scv,
+                              elem, matl, sect, jt, gdisp):
     """Calculate the member forces and displacements, and support reactions.
 
 
@@ -333,7 +335,7 @@ def member_forces_disps_reacs(num_scj, elem, matl, sect, jt):
         sup_reac()
 
 
-def member_global_disp():
+def member_global_disp(je, je, num_scj, num_dof, scv, gdisp, mged):
     pass
 
 
