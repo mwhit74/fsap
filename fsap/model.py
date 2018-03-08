@@ -315,15 +315,15 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
 
 
     """
-    mlsm = np.zeros([2*num_scj,2*num_scj]) #member local stiffness matrix
-    mtm = np.zeros([2*num_scj,2*num_scj]) #member transform matrix
-    mged = np.zeros(2*num_scj) #member global end disps
-    mled = np.zeros(2*num_scj) #member local end disps
-    mlef = np.zeros(2*num_scj) #member local end forces
-    mgef = np.zeros(2*num_scj) #member global end forces
     reac = np.zeros(2*num_scj) #support reactions
 
     for im in range(len(elem)):
+        mlsm = np.zeros([2*num_scj,2*num_scj]) #member local stiffness matrix
+        mtm = np.zeros([2*num_scj,2*num_scj]) #member transform matrix
+        mged = np.zeros(2*num_scj) #member global end disps
+        mled = np.zeros(2*num_scj) #member local end disps
+        mlef = np.zeros(2*num_scj) #member local end forces
+        mgef = np.zeros(2*num_scj) #member global end forces
         (jb, je, e, a, xb, yb, 
         xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
         print "\nmember: " + str(im)
@@ -335,9 +335,13 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
         print mled
         member_local_stiffness_matrix(e, a, bl, num_scj, mlsm)
         print mlsm
-        #member_local_forc()
-        #member_global_forc()
-        #sup_reac()
+        member_local_forc(num_scj, mlsm, mled, mlef)
+        print mlef
+        member_global_forc(num_scj, mtm, mlef, mgef)
+        print mgef
+        sup_reac(jb, je, num_scj, num_dof, scv, mgef, reac)
+
+    print "\nReactions: " + str(reac)
 
 
 def member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged):
@@ -434,15 +438,42 @@ def member_local_stiffness_matrix(e, a, bl, num_scj, mlsm):
 
 
 
-def member_local_forc():
-    pass
+def member_local_forc(num_scj, mlsm, mled, mlef):
+    """Member forces in local coordiantes.
+
+    """
+    for i in range(2*num_scj):
+        for j in range(2*num_scj):
+            mlef[i] = mlef[i] + mlsm[i][j]*mled[j]
 
 
-def member_global_forc():
-    pass
+def member_global_forc(num_scj, mtm, mlef, mgef):
+    """Mmeber forces in global coordinates.
+
+    """
+    for i in range(2*num_scj):
+        for j in range(2*num_scj):
+            mgef[i] = mgef[i] + mtm[j][i]*mlef[j]
 
 
-def sup_reac():
-    pass
+def sup_reac(jb, je, num_scj, num_dof, scv, mgef, reac):
+    """Support reactions.
 
+    """
+    for i in range(1,2*num_scj+1):
+        if i <= num_scj: #beginning of member
+            str_coord_index = (jb - 1)*num_scj + i 
+        else: #end of member
+            str_coord_index = (je - 1)*num_scj + (i - num_scj) 
+
+        print str_coord_index
+
+        str_coord = scv[str_coord_index - 1]
+
+        print str_coord
+
+        if str_coord > num_dof:
+            #str_coord - num_dof offsets to create an array index
+            reac[str_coord - num_dof - 1] = (reac[str_coord - num_dof - 1] +
+                                             mgef[i - 1])
 
