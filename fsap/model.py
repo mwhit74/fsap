@@ -326,13 +326,15 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
     for im in range(len(elem)):
         (jb, je, e, a, xb, yb, 
         xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
+        print "\nmember: " + str(im)
         member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged)
         print mged
         member_transform_matrix(co, si, num_scj, mtm)
         print mtm
         member_local_disp(num_scj, mged, mtm, mled)
         print mled
-        #member_local_stiffness_matrix()
+        member_local_stiffness_matrix(e, a, bl, num_scj, mlsm)
+        print mlsm
         #member_local_forc()
         #member_global_forc()
         #sup_reac()
@@ -408,11 +410,28 @@ def member_transform_matrix(co, si, num_scj, mtm):
     mtm[3][2] = -si
     mtm[3][3] = co
 
-def member_local_disp(num_scj, mged, mtm, mled):
-    pass
 
-def member_local_stiffness_matrix():
-    pass
+def member_local_disp(num_scj, mged, mtm, mled):
+    """Member displacements in local coodinates.
+
+    """
+    for i in range(2*num_scj):
+        for j in range(2*num_scj):
+            mled[i] = mled[i] + mtm[i][j]*mged[j]
+
+
+def member_local_stiffness_matrix(e, a, bl, num_scj, mlsm):
+    """Assemble member stiffness matrix in local coordinates.
+
+    """
+    for i in range(2*num_scj):
+        for j in range(2*num_scj):
+            z = e*a/bl
+            mlsm[0][0] = z
+            mlsm[0][2] = -z
+            mlsm[2][0] = -z
+            mlsm[2][2] = z
+
 
 
 def member_local_forc():
