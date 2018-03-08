@@ -15,13 +15,14 @@ ndof = model.num_dof(sup, num_scj, num_jt)
 print "ndof " + str(ndof)
 scv = model.str_coord_vector(sup, num_scj, num_jt, ndof)
 print scv
-sk = model.assemble_stiffness(ndof, num_scj, scv, jt, matl, sect, elem)
+sk = model.assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt, matl, sect, elem)
 print sk
 p = model.joint_load_vector(ndof, num_scj, scv, load)
 print p
 
 LU, ov = lu.lu_decomp(sk)
-x = lu.lu_solve(LU, ov, p)
-print x
+gdisp = lu.lu_solve(LU, ov, p)
+print gdisp
 
-
+model.member_forces_disps_reacs(ndof, num_scj, scv,
+                              elem, matl, sect, jt, gdisp)

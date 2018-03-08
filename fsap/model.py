@@ -106,7 +106,7 @@ def str_coord_vector(sup, num_scj, num_jt, ndof):
 
     return scv
 
-def member_properties(elem, matl, sect, jt):
+def member_properties(im, elem, matl, sect, jt):
 
     jb = elem[im][0]
     je = elem[im][1]
@@ -161,7 +161,7 @@ def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt,
     gk = np.zeros([2*num_scj, 2*num_scj]) #member stiffness matrix in global
     for im in range(len(elem)):
         (jb, je, e, a, xb, yb, 
-        xe, ye, bl, co, si) = member_properties(elem, matl, sect, jt)
+        xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
         member_global_stiffness_matrix(e,a,bl,co,si,gk)
         print e
         print a
@@ -315,8 +315,8 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
 
 
     """
-    mlsm = np.zeros(2*num_scj,2*num_scj) #member local stiffness matrix
-    mtm = np.zeros(2*num_scj,2*num_scj) #member transform matrix
+    mlsm = np.zeros([2*num_scj,2*num_scj]) #member local stiffness matrix
+    mtm = np.zeros([2*num_scj,2*num_scj]) #member transform matrix
     mged = np.zeros(2*num_scj) #member global end disps
     mled = np.zeros(2*num_scj) #member local end disps
     mlef = np.zeros(2*num_scj) #member local end forces
@@ -325,27 +325,91 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
 
     for im in range(len(elem)):
         (jb, je, e, a, xb, yb, 
-        xe, ye, bl, co, si) = member_properties(elem, matl, sect, jt)
-        member_global_disp()
-        member_transform_matrix()
-        member_local_disp()
-        member_local_stiffness_matrix()
-        member_local_forc()
-        member_global_forc()
-        sup_reac()
+        xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
+        member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged)
+        print mged
+        member_transform_matrix(co, si, num_scj, mtm)
+        print mtm
+        member_local_disp(num_scj, mged, mtm, mled)
+        print mled
+        #member_local_stiffness_matrix()
+        #member_local_forc()
+        #member_global_forc()
+        #sup_reac()
 
 
-def member_global_disp(je, je, num_scj, num_dof, scv, gdisp, mged):
+def member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged):
+    """Member global displacement vector.
+
+    For each member, transfers the displacment in global coordinates from 
+    the structure coordinates to the local member in global coordinates.
+
+    Args:
+        jb
+        je
+        num_scj
+        num_dof
+        scv
+        gdisp(numpy array): displacement of the structure coordinates in global
+                            coordinates
+        mged(numpy array): local member end displacements in global coordinates
+
+    Returns:
+        None
+
+    Notes:
+        Populates the mged array with values.
+    """
+    #look at beginning joint of each member
+    str_coord_index = (jb - 1)*num_scj - 1
+    for i in range(num_scj):
+        str_coord_index = str_coord_index + 1
+        str_coord = scv[str_coord_index]
+        if str_coord <= num_dof:
+            mged[i] = gdisp[str_coord-1]
+
+    #look at end joint of each member
+    str_coord_index = (je - 1)*num_scj - 1
+    for i in range(num_scj,2*num_scj):
+        str_coord_index = str_coord_index + 1
+        str_coord = scv[str_coord_index]
+        if str_coord <= num_dof:
+            mged[i] = gdisp[str_coord-1]
+
+
+def member_transform_matrix(co, si, num_scj, mtm):
+    """Assemble member transformation matrix.
+    
+    Stores the values of the direction sines and cosines in the appropriate
+    places in the matrix.
+
+    Assembles the member local to global transformation matrix
+
+    Args:
+        co(float): cosine of the angle between horizontal and member axis;
+                   global x-axis positive to right
+        si(float): sine of the angle between horizontal and member axis; global
+                   x-axis positive to right
+        num_scj
+        mtm(numpy array): 2D arry representation of the transformation matrix
+
+    Returns:
+        None
+
+    Notes:
+        Populates the mtm matrix.
+    """
+    mtm[0][0] = co
+    mtm[0][1] = si
+    mtm[1][0] = -si
+    mtm[1][1] = co
+    mtm[2][2] = co
+    mtm[2][3] = si
+    mtm[3][2] = -si
+    mtm[3][3] = co
+
+def member_local_disp(num_scj, mged, mtm, mled):
     pass
-
-
-def member_transform_matrix():
-    pass
-
-
-def member_local_disp():
-    pass
-
 
 def member_local_stiffness_matrix():
     pass
