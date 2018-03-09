@@ -2,6 +2,7 @@
 
 import ri
 import model
+import output
 import naf.linalg.lu as lu
 
 input_file = ('test/sample_input_file.txt')
@@ -12,17 +13,15 @@ num_scj = 2 #truss
 num_jt = len(jt)
 
 ndof = model.num_dof(sup, num_scj, num_jt)
-print "ndof " + str(ndof)
 scv = model.str_coord_vector(sup, num_scj, num_jt, ndof)
-print scv
 sk = model.assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt, matl, sect, elem)
-print sk
 p = model.joint_load_vector(ndof, num_scj, scv, load)
-print p
 
 LU, ov = lu.lu_decomp(sk)
 gdisp = lu.lu_solve(LU, ov, p)
-print gdisp
 
-model.member_forces_disps_reacs(ndof, num_scj, scv,
-                              elem, matl, sect, jt, gdisp)
+(mgedl, mtml, mledl, mlsml, 
+mlefl, mgefl, reac) = model.member_forces_disps_reacs(ndof, num_scj, scv,
+                                                      elem, matl, sect, jt, gdisp)
+output.echo_input(jt, sup, matl, sect, elem, load)
+output.echo_output(gdisp, mlefl, reac)

@@ -163,12 +163,12 @@ def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt,
         (jb, je, e, a, xb, yb, 
         xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
         member_global_stiffness_matrix(e,a,bl,co,si,gk)
-        print e
-        print a
-        print bl
-        print co
-        print si
-        print gk
+        #print e
+        #print a
+        #print bl
+        #print co
+        #print si
+        #print gk
         store_structure_stiffness_matrix(jb, je, num_scj, ndof, scv, gk, s)
 
     return s
@@ -315,6 +315,12 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
 
 
     """
+    mgedl = []
+    mtml = []
+    mledl = []
+    mlsml = []
+    mlefl = []
+    mgefl = []
     reac = np.zeros(2*num_scj) #support reactions
 
     for im in range(len(elem)):
@@ -326,23 +332,21 @@ def member_forces_disps_reacs(num_dof, num_scj, scv,
         mgef = np.zeros(2*num_scj) #member global end forces
         (jb, je, e, a, xb, yb, 
         xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
-        print "\nmember: " + str(im)
         member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged)
-        print mged
+        mgedl.append(mged)
         member_transform_matrix(co, si, num_scj, mtm)
-        print mtm
+        mtml.append(mtm)
         member_local_disp(num_scj, mged, mtm, mled)
-        print mled
+        mledl.append(mled)
         member_local_stiffness_matrix(e, a, bl, num_scj, mlsm)
-        print mlsm
+        mlsml.append(mlsm)
         member_local_forc(num_scj, mlsm, mled, mlef)
-        print mlef
+        mlefl.append(mlef)
         member_global_forc(num_scj, mtm, mlef, mgef)
-        print mgef
+        mgefl.append(mgef)
         sup_reac(jb, je, num_scj, num_dof, scv, mgef, reac)
 
-    print "\nReactions: " + str(reac)
-
+    return mgedl, mtml, mledl, mlsml, mlefl, mgefl, reac
 
 def member_global_disp(jb, je, num_scj, num_dof, scv, gdisp, mged):
     """Member global displacement vector.
@@ -466,11 +470,7 @@ def sup_reac(jb, je, num_scj, num_dof, scv, mgef, reac):
         else: #end of member
             str_coord_index = (je - 1)*num_scj + (i - num_scj) 
 
-        print str_coord_index
-
         str_coord = scv[str_coord_index - 1]
-
-        print str_coord
 
         if str_coord > num_dof:
             #str_coord - num_dof offsets to create an array index
