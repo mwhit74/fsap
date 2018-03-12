@@ -1,0 +1,4 @@
+Matrix Structural Analysis 2nd Ed by Aslam Kassimali
+Matrix Structural Analysis 2nd Ed by McGuire, Gallagher, Ziemian
+Applied Numerical Anlaysis 7th Ed by Gerald and Wheatley
+https://www.colorado.edu/engineering/cas/courses.d/NFEM.d/
