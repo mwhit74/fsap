@@ -24,4 +24,4 @@ gdisp = lu.lu_solve(LU, ov, p)
 mlefl, mgefl, reac) = model.member_forces_disps_reacs(ndof, num_scj, scv,
                                                       elem, matl, sect, jt, gdisp)
 output.echo_input(jt, sup, matl, sect, elem, load)
-output.echo_output(gdisp, mlefl, reac)
+output.echo_output(gdisp, mlefl, reac, scv, jt, num_scj, ndof)

@@ -141,10 +141,6 @@ def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt,
     matrix in global coordinates. The mstiffg function handles the assembly
     of of the member stiffness matrix in global coordinates.
 
-    
-
-
-
     Args:
         ndof (int): number of unrestrained degrees of freedom of the
                     struture
@@ -163,12 +159,6 @@ def assemble_structure_stiffness_matrix(ndof, num_scj, scv, jt,
         (jb, je, e, a, xb, yb, 
         xe, ye, bl, co, si) = member_properties(im, elem, matl, sect, jt)
         member_global_stiffness_matrix(e,a,bl,co,si,gk)
-        #print e
-        #print a
-        #print bl
-        #print co
-        #print si
-        #print gk
         store_structure_stiffness_matrix(jb, je, num_scj, ndof, scv, gk, s)
 
     return s
