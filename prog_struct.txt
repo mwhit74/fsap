@@ -54,6 +54,9 @@ ref - reference from another library
             %therefore they will be estimated for known shapes
             %otherwise the user will be required to provide them
                 %correct shear area for general shape
+                https://engineering.stackexchange.com/questions/7989/shear-area-of-atypical-section
+                Cowper G.R., The shear coefficient in Timoshenko’s beam theory,J. Appl. Mech.
+                http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.639.7821&rep=rep1&type=pdf
                 %correct torsional constant for general shape
             {plastic}
             {correct plastic section modulus for general shape}
