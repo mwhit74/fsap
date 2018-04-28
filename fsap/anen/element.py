@@ -1,39 +1,63 @@
-from fsap.geom import line
+import math
 
 class Element:
-    def __init__(self, name, beg, end, matl, sp):
+    def __init__(self, name, beg_jt, end_jt, sepr, matl):
         self.name = name
-        self.beg = beg
-        self.end = end
+        self.beg_jt = beg_jt
+        self.end_jt = end_jt
+        self.sepr = sepr
         self.matl = matl
-        self.sp = sp
+        self.k = None
 
-        self.line = line.Line3D(self.beg, self.end)
-        self.length = self.line.length()
+        self.length = self.length()
 
-    def tranformation_matrix():
+        self.alpha = self.alpha()
+        self.beta = self.beta()
+        self.gamma = self.gamma
+
+    def length(self):
+        return math.sqrt(math.pow(self.beg_jt.x - self.end_jt.x,2) +
+                         math.pow(self.beg_jt.y - self.end_jt.y,2) +
+                         math.pow(self.beg_jt.z - self.end_jt.z,2))
+
+    def alpah(self):
         pass
 
-
-    def local_stiffness_matrix():
+    def beta(self):
         pass
 
-
-    def global_stiffness_matrix():
+    def gamma(self):
         pass
 
+    def scv(self):
+        return join(self.beg_jt.scv,self.end_jt.scv)
 
-    def local_member_end_forces():
+class TrussElement(Element):
+    def __init__(self, name, beg_jt, end_jt, sepr, matl):
+        Element.__init__(name, beg_jt, end_jt, sepr, matl)
+
+    def assemble_transformation_matrix(self):
         pass
 
-
-    def global_member_end_forces():
+    def assemble_local_stiffness_matrix(self):
         pass
 
+class TwoDFrameElement(Element):
+    def __init__(self, name, beg_jt, end_jt, sepr, matl):
+        Element.__init__(name, beg_jt, end_jt, sepr, matl)
 
-    def local_member_end_displacements():
+    def assemble_transformation_matrix(self):
         pass
 
+    def assemble_local_stiffness_matrix(self):
+        pass
 
-    def global_member_end_displacements():
+class ThreeDFrameElement(Element):
+    def __init__(self, name, beg_jt, end_jt, sepr, matl):
+        Element.__init__(name, beg_jt, end_jt, sepr, matl)
+
+    def assemble_transformation_matrix(self):
+        pass
+
+    def assemble_local_stiffness_matrix(self):
         pass
