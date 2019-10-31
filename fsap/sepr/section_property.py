@@ -1,4 +1,4 @@
-from fsap.geom.point import Point2D
+from fsap.geom.point import Point3D
 import math
 import functools
 import pdb
@@ -34,7 +34,7 @@ class SectionProperty:
         """Initialize section property class
 
         Args:
-            points (list of tuples or list of Point2D): coordinate points
+            points (list of tuples or list of Point3D): coordinate points
                 representing the outline of the polygon
         Returns:
             None
@@ -80,12 +80,12 @@ class SectionProperty:
 
 
     def convert_to_points(self, points):
-        """Converts list of tuples to list of Point2D objects"""
-        if all(isinstance(pt, Point2D) for pt in points):
+        """Converts list of tuples to list of Point3D objects"""
+        if all(isinstance(pt, Point3D) for pt in points):
             self.points = points
         else:
             for pt in points:
-                self.points.append(Point2D(pt[0], pt[1]))
+                self.points.append(Point3D(pt[0], pt[1]))
 
 
     def order_points(self):
@@ -136,7 +136,6 @@ class SectionProperty:
         #if a is farther than b, a is ccw from b, otherwise a is cw from b
         d1 = math.pow((a.x - self.centroid.x),2) + math.pow((a.y - self.centroid.y),2)
         d2 = math.pow((b.x - self.centroid.x),2) + math.pow((b.y - self.centroid.y),2)
-        print d1 > d2
         if d1 > d2:
             return 1
         else:
@@ -248,7 +247,7 @@ class SectionProperty:
         xc = sum_x/num_pts
         yc = sum_y/num_pts
 
-        return Point2D(xc, yc)
+        return Point3D(xc, yc)
             
     def ixx_x(self):
         """Calculates second moment of area about x-axis (y=0)"""
@@ -365,7 +364,7 @@ class SectionProperty:
         return var
 
 
-class UserDefinedSectionProperty(SectionProperty):
-    def __init__(
+#class UserDefinedSectionProperty(SectionProperty):
+#    def __init__(
 
 #class RectSectionPropety(SectionProperty):
