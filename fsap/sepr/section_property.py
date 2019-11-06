@@ -2,6 +2,7 @@ from fsap.geom.point import Point3D
 import math
 import functools
 import pdb
+import matplotlib.pyplot as plt
 
 #additional functionality to add:
 #   calc principle axes
@@ -38,6 +39,11 @@ class SectionProperty:
                 representing the outline of the polygon
         Returns:
             None
+        Notes:
+        1. The points entered as a list of tuples can be entered as a
+           point on a 2D coordinate system, e.g. (x,y). The z-coordinate
+           can be truncated and the Point3D class will automatically add
+           a z-coordinate of 0.0.
         """
         self.points = []
         self.convert_to_points(points)
@@ -362,6 +368,75 @@ class SectionProperty:
                 cur_y = next_y
         
         return var
+
+    def all_props(self):
+        """Returns a dictonary of all properties."""
+        props = {}
+
+        props["max_y"] = self.max_y
+        props["max_x"] = self.max_x
+        props["min_y"] = self.min_y
+        props["min_x"] = self.min_x
+        props["bounding_box"] = self.box
+        props["height"] = self.height
+        props["width"] = self.width
+
+        props["area"] = self.area
+        props["ena_x"] = self.ena_x
+        props["ena_y"] = self.ena_y
+
+        props["yt"] = self.yt
+        props["yb"] = self.yb
+        props["xl"] = self.xl
+        props["xr"] = self.xr
+
+        props["ixx_x"] = self.ixx_x
+        props["iyy_y"] = self.iyy_y
+        props["ixx_c"] = self.ixx_c
+        props["iyy_c"] = self.iyy_c
+        props["ixy_xy"] = self.ixy_xy
+        props["ixy_c"] = self.ixy_c
+
+        props["sxxt"] = self.sxxt
+        props["sxxb"] = self.sxxb
+        props["syyl"] = self.syyl
+        props["syyr"] = self.syyr
+
+        props["rx"] = self.rx
+        props["ry"] = self.ry
+        props["rmin"] = self.rmin
+
+        return props
+
+    def plot_section(self):
+        """Plots the section graphically."""
+        pts = [pt.cc() for pt in self.points]
+        xc = [pt[0] for pt in pts]
+        yc = [pt[1] for pt in pts]
+        
+        plt.plot(xc, yc)
+
+        plt.xlabel("Width")
+        plt.ylabel("Height")
+        plt.title("Section Plot")
+        plt.legend()
+        plt.rcParams["figure.figsize"] = (10,10)
+        
+
+    def __str__(self):
+        """Provides summary of all properties."""
+        props = self.all_props()
+
+        out_str = ""
+
+        for p in props.keys():
+            out_str = out_str + p + ": " + str(props[p]) + "\n"
+
+        return out_str
+            
+       
+        
+        
 
 
 #class UserDefinedSectionProperty(SectionProperty):
