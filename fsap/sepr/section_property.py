@@ -373,6 +373,8 @@ class SectionProperty:
         """Returns a dictonary of all properties."""
         props = {}
 
+        props["points"] = [pt.cc() for pt in self.points]
+
         props["max_y"] = self.max_y
         props["max_x"] = self.max_x
         props["min_y"] = self.min_y
@@ -408,19 +410,19 @@ class SectionProperty:
 
         return props
 
-    def plot_section(self):
+    def plot_section(self, size_x = 10, size_y = 10):
         """Plots the section graphically."""
         pts = [pt.cc() for pt in self.points]
         xc = [pt[0] for pt in pts]
         yc = [pt[1] for pt in pts]
         
-        plt.plot(xc, yc)
+        plt.plot(xc, yc, "o")
 
         plt.xlabel("Width")
         plt.ylabel("Height")
         plt.title("Section Plot")
         plt.legend()
-        plt.rcParams["figure.figsize"] = (10,10)
+        plt.rcParams["figure.figsize"] = (size_x, size_y)
         
 
     def __str__(self):
