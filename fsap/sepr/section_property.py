@@ -437,8 +437,47 @@ class SectionProperty:
         return out_str
             
        
+    
+class ISectionProperty(SectionProperty):
+    
+    def __init__(bf_top, tf_top, t_web, d_web, bf_bott, tf_bott):
         
+        self.bf_top = bf_top
+        self.tf_top = tf_top
+        self.t_web = t_web
+        self.d_web = d_web
+        self.bf_bott = bf_bott
+        self.tf_bott = tf_bott
         
+        self.pts = []
+        self.calc_points()
+        
+        SectionProperty.__init__(self, self.pts)
+        
+    def calc_points(self):
+        
+        d1 = self.bf_bott/2 + self.t_web/2
+        d2 = self.tf_bott + self.d_web
+        d3 = self.bf_bott/2 + self.bf_top/2
+        d4 = self.tf_bott + self.d_web + self.tf_top
+        d5 = self.bf_bott/2 - self.bf_top/2
+        d6 = self.bf_bott/2 - self.t_web/2
+        
+        if self.bf_bott >= self.bf_top:
+            self.pts.append(0., 0.)
+            self.pts.append(self.bf_bott, 0.)
+            self.pts.append(self.bf_bott, self.tf_bott)
+            self.pts.append(d1, sefl.tf_bott)
+            self.pts.append(d1, d2)
+            self.pts.append(d3, d2)
+            self.pts.append(d3, d4)
+            self.pts.append(d5, d4)
+            self.pts.append(d5, d2)
+            self.pts.append(d6, d2)
+            self.pts.append(d6, self.tf_bott)
+            self.pts.append(0., self.tf_bott)
+        elif self.bf_bott < self.bf_top:
+            pass
 
 
 #class UserDefinedSectionProperty(SectionProperty):
