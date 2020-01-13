@@ -23,24 +23,26 @@ import matplotlib.pyplot as plt
 #   voids
 #   circles
 
-class SectionProperty:
+class SP:
     """
     Elastic section property class
 
     User Notes:
         1. All points must be located entirely within the first quadrant
-        2. A group of points must be specified as a solid or void
     """
     def __init__(self, points):
         """Initialize section property class
-
+        
         Args:
             points (list of tuples or list of Point3D): coordinate points
                 representing the outline of the polygon
         Returns:
             None
         Notes:
-        1. The points entered as a list of tuples can be entered as a
+        1. Points for a solid polygon must be entered in a clockwise direction.
+        2. Points entereed for a void space must be entered in a
+           counter-clockwise direction.
+        3. The points entered as a list of tuples can be entered as a
            point on a 2D coordinate system, e.g. (x,y). The z-coordinate
            can be truncated and the Point3D class will automatically add
            a z-coordinate of 0.0.
@@ -48,7 +50,6 @@ class SectionProperty:
         self.points = []
         self.convert_to_points(points)
         self.centroid = self.centroid()
-        self.order_points()
         self.add_end_pt()
 
         self.max_y = self.max_y()
@@ -95,7 +96,7 @@ class SectionProperty:
 
 
     def order_points(self):
-        """Order points in a counter-clockwise direction
+        """Order points in a clockwise direction for a convex polygon
 
         References:
         https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
@@ -107,15 +108,15 @@ class SectionProperty:
 
     def less(self,a, b):
         """Comparison function to determine the order of two points"""
-        #if a is right of center and b is left of center, a is ccw from b
+        #if a is left of center and b is right of center, a is cw from b
         if b.x - self.centroid.x >= 0.0 and a.x - self.centroid.x < 0.0:
             return 1
-        #if a is left of center and b is right of center, a is cw from b
+        #if a is right of center and b is left of center, a is ccw from b
         if b.x - self.centroid.x < 0.0 and a.x - self.centroid.x >= 0:
             return -1
         #if a, b, and center lie on the same same vertical line
         if b.x - self.centroid.x == 0.0 and a.x - self.centroid.x == 0.0:
-            #if a.y is greater than b.y, a.y is ccw from b.y otherwise a.y is cw
+            #if a.y is greater than b.y, a.y is cw from b.y otherwise a.y is ccw
             #from b.y
             if a.y < b.y:
                 return 1
@@ -359,13 +360,13 @@ class SectionProperty:
         cur_y = cur_pt.y
         
         for pt in self.points:
-                next_x = pt.x
-                next_y = pt.y
+            next_x = pt.x
+            next_y = pt.y
                 
-                var = var + func(cur_x, cur_y, next_x, next_y)
+            var = var + func(cur_x, cur_y, next_x, next_y)
                         
-                cur_x = next_x
-                cur_y = next_y
+            cur_x = next_x
+            cur_y = next_y
         
         return var
 
@@ -412,6 +413,9 @@ class SectionProperty:
 
     def plot_section(self, size_x = 10, size_y = 10):
         """Plots the section graphically."""
+        
+        #matplotlib patches and paths for plotting enclosed shapes
+        
         pts = [pt.cc() for pt in self.points]
         xc = [pt[0] for pt in pts]
         yc = [pt[1] for pt in pts]
@@ -438,9 +442,9 @@ class SectionProperty:
             
        
     
-class ISectionProperty(SectionProperty):
+class ISP(SP):
     
-    def __init__(bf_top, tf_top, t_web, d_web, bf_bott, tf_bott):
+    def __init__(self, bf_top, tf_top, t_web, d_web, bf_bott, tf_bott):
         
         self.bf_top = bf_top
         self.tf_top = tf_top
@@ -452,35 +456,65 @@ class ISectionProperty(SectionProperty):
         self.pts = []
         self.calc_points()
         
-        SectionProperty.__init__(self, self.pts)
+        SP.__init__(self, self.pts)
         
     def calc_points(self):
         
-        d1 = self.bf_bott/2 + self.t_web/2
-        d2 = self.tf_bott + self.d_web
-        d3 = self.bf_bott/2 + self.bf_top/2
-        d4 = self.tf_bott + self.d_web + self.tf_top
-        d5 = self.bf_bott/2 - self.bf_top/2
-        d6 = self.bf_bott/2 - self.t_web/2
-        
         if self.bf_bott >= self.bf_top:
-            self.pts.append(0., 0.)
-            self.pts.append(self.bf_bott, 0.)
-            self.pts.append(self.bf_bott, self.tf_bott)
-            self.pts.append(d1, sefl.tf_bott)
-            self.pts.append(d1, d2)
-            self.pts.append(d3, d2)
-            self.pts.append(d3, d4)
-            self.pts.append(d5, d4)
-            self.pts.append(d5, d2)
-            self.pts.append(d6, d2)
-            self.pts.append(d6, self.tf_bott)
-            self.pts.append(0., self.tf_bott)
+            
+            d1 = self.bf_bott/2 + self.t_web/2
+            d2 = self.tf_bott + self.d_web
+            d3 = self.bf_bott/2 + self.bf_top/2
+            d4 = self.tf_bott + self.d_web + self.tf_top
+            d5 = self.bf_bott/2 - self.bf_top/2
+            d6 = self.bf_bott/2 - self.t_web/2
+            
+            self.pts.append((0., 0.))
+            self.pts.append((0., self.tf_bott))
+            self.pts.append((d6, self.tf_bott))
+            self.pts.append((d6, d2))
+            self.pts.append((d5, d2))
+            self.pts.append((d5, d4))
+            self.pts.append((d3, d4))
+            self.pts.append((d3, d2))
+            self.pts.append((d1, d2))
+            self.pts.append((d1, self.tf_bott))
+            self.pts.append((self.bf_bott, self.tf_bott))
+            self.pts.append((self.bf_bott, 0.))
+            
         elif self.bf_bott < self.bf_top:
             pass
+        
+class TSP(SP):
+    
+    def __init__(self, bf, tf, t_stem, d_stem):
+        
+        self.bf = bf
+        self.tf = tf
+        self.t_stem = t_stem
+        self.d_stem = d_stem
+
+        
+        self.pts = []
+        self.calc_points()
+        
+        SP.__init__(self, self.pts)
+        
+    def calc_points(self):
+        
+        d1 = self.bf/2 - self.t_stem/2
+        d2 = self.bf/2 + self.t_stem/2
+        d3 = self.d_stem + self.tf
+
+        self.pts.append((d1, 0.))
+        self.pts.append((d1, self.d_stem))
+        self.pts.append((0., self.d_stem))
+        self.pts.append((0., d3))
+        self.pts.append((self.bf, d3))
+        self.pts.append((self.bf, self.d_stem))
+        self.pts.append((d2, self.d_stem))
+        self.pts.append((d2, 0.))
 
 
-#class UserDefinedSectionProperty(SectionProperty):
-#    def __init__(
-
-#class RectSectionPropety(SectionProperty):
+class RectSP(SP):
+    pass
