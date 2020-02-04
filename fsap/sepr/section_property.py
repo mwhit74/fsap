@@ -439,12 +439,13 @@ class SP:
             out_str = out_str + p + ": " + str(props[p]) + "\n"
 
         return out_str
-            
-       
     
 class ISP(SP):
     
-    def __init__(self, bf_top, tf_top, t_web, d_web, bf_bott, tf_bott):
+    def __init__(self, bf_top, tf_top, t_web, d_web, 
+                 bf_bott=None, tf_bott=None,
+                 bf_top_cp=0.0, tf_top_cp=0.0, 
+                 bf_bott_cp=0.0, tf_bott_cp=0.0):
         
         self.bf_top = bf_top
         self.tf_top = tf_top
@@ -453,42 +454,106 @@ class ISP(SP):
         self.bf_bott = bf_bott
         self.tf_bott = tf_bott
         
+        self.bf_top_cp = bf_top_cp
+        self.tf_top_cp = tf_top_cp
+        self.bf_bott_cp = bf_bott_cp
+        self.tf_bott_cp = tf_bott_cp
+        
         self.pts = []
         self.calc_points()
         
         SP.__init__(self, self.pts)
         
+    @property
+    def bf_bott(self):
+        return self.__bf_bott
+    
+    @bf_bott.setter
+    def bf_bott(self, bf_bott):
+        if bf_bott == None:
+            self.__bf_bott = self.bf_top
+        else:
+            self.__bf_bott = bf_bott
+
+    @property
+    def tf_bott(self):
+        return self.__tf_bott
+    
+    @tf_bott.setter
+    def tf_bott(self, tf_bott):
+        if tf_bott == None:
+            self.__tf_bott = self.tf_top
+        else:
+            self.__tf_bott = tf_bott            
+    
+        
     def calc_points(self):
         
-        if self.bf_bott >= self.bf_top:
+        if self.bf_top_cp >= self.bf_bott_cp:  
             
-            d1 = self.bf_bott/2 + self.t_web/2
-            d2 = self.tf_bott + self.d_web
-            d3 = self.bf_bott/2 + self.bf_top/2
-            d4 = self.tf_bott + self.d_web + self.tf_top
-            d5 = self.bf_bott/2 - self.bf_top/2
-            d6 = self.bf_bott/2 - self.t_web/2
+            d1 = self.bf_top_cp/2. - self.bf_bott_cp/2.
+            d2 = self.bf_top_cp/2. - self.bf_bott/2.
+            d3 = self.tf_bott_cp + self.tf_bott
+            d4 = self.bf_top_cp/2. - self.t_web/2.
+            d5 = d3 + self.d_web
+            d6 = self.bf_top_cp/2. - self.bf_top/2.
+            d7 = d5 + self.tf_top
+            d8 = d7 + self.tf_top_cp
+            d9 = self.bf_top_cp/2. + self.bf_top/2.
+            d10 = self.bf_top_cp/2. + self.t_web/2.
+            d11 = self.bf_top_cp/2. + self.bf_top/2.
+            d12 = self.bf_top_cp/2. + self.bf_bott_cp/2.
+
             
-            self.pts.append((0., 0.))
-            self.pts.append((0., self.tf_bott))
-            self.pts.append((d6, self.tf_bott))
-            self.pts.append((d6, d2))
-            self.pts.append((d5, d2))
-            self.pts.append((d5, d4))
-            self.pts.append((d3, d4))
-            self.pts.append((d3, d2))
-            self.pts.append((d1, d2))
-            self.pts.append((d1, self.tf_bott))
-            self.pts.append((self.bf_bott, self.tf_bott))
-            self.pts.append((self.bf_bott, 0.))
+            self.pts.append((d1, 0.))
+            self.pts.append((d1, self.tf_bott_cp))
+            self.pts.append((d2, self.tf_bott_cp))
+            self.pts.append((d2, d3))
+            self.pts.append((d4, d3))
+            self.pts.append((d4, d5))
+            self.pts.append((d6, d5))
+            self.pts.append((d6, d7))
+            self.pts.append((0., d7))
+            self.pts.append((0., d8))
+            self.pts.append((self.bf_top_cp, d8))
+            self.pts.append((self.bf_top_cp, d7))
+            self.pts.append((d9, d7))
+            self.pts.append((d9, d5))
+            self.pts.append((d10, d5))
+            self.pts.append((d10, d3))
+            self.pts.append((d11, d3))
+            self.pts.append((d11, self.tf_bott_cp))
+            self.pts.append((d12, self.tf_bott_cp))
+            self.pts.append((d12, 0.))
             
-        elif self.bf_bott < self.bf_top:
-            pass
+            
+        elif self.bf_top_cp < self.bf_bott_cp:
+            print("Not defined")
         
+    def __str__(self):
+        """Provides summary of all properties."""
+        
+        user_input = (f'bf_top_cp = {self.bf_top_cp:.2f}, ' +
+                      f'tf_top_cp = {self.tf_top_cp:.2f}, ' +
+                      f'bf_top = {self.bf_top:.2f}, ' +
+                      f'tf_top = {self.tf_top:.2f}, ' +
+                      f't_web = {self.t_web:.2f}, ' +
+                      f'd_web = {self.d_web:.2f}, ' +
+                      f'bf_bott = {self.bf_bott:.2f}, ' +
+                      f'tf_bott = {self.tf_bott:.2f}, ' +
+                      f'bf_bott_cp = {self.bf_bott_cp:.2f}, ' +
+                      f'tf_bott_cp = {self.tf_bott_cp:.2f} \n\n')
+        
+        all_props = super().__str__()
+        
+        return user_input + all_props
+    
 class TSP(SP):
     
-    def __init__(self, bf, tf, t_stem, d_stem):
+    def __init__(self, bf, tf, t_stem, d_stem, bf_cp = 0.0, tf_cp = 0.0):
         
+        self.bf_cp = bf_cp
+        self.tf_cp = tf_cp
         self.bf = bf
         self.tf = tf
         self.t_stem = t_stem
@@ -502,19 +567,267 @@ class TSP(SP):
         
     def calc_points(self):
         
-        d1 = self.bf/2 - self.t_stem/2
-        d2 = self.bf/2 + self.t_stem/2
+        d1 = self.bf_cp/2. - self.tf_cp/2.
+        d2 = self.bf_cp/2. - self.bf/2.
         d3 = self.d_stem + self.tf
-
+        d4 = d3 + self.tf_cp
+        d5 = self.bf_cp/2. + self.bf/2.
+        d6 = self.bf_cp/2. + self.tf_cp/2.
+        
         self.pts.append((d1, 0.))
         self.pts.append((d1, self.d_stem))
-        self.pts.append((0., self.d_stem))
-        self.pts.append((0., d3))
-        self.pts.append((self.bf, d3))
-        self.pts.append((self.bf, self.d_stem))
         self.pts.append((d2, self.d_stem))
-        self.pts.append((d2, 0.))
-
-
+        self.pts.append((d2, d3))
+        self.pts.append((0., d3))
+        self.pts.append((0., d4))
+        self.pts.append((self.bf_cp, d4))
+        self.pts.append((self.bf_cp, d3))
+        self.pts.append((d5, d3))
+        self.pts.append((d5, self.d_stem))
+        self.pts.append((d6, self.d_stem))
+        self.pts.append((d6, 0.))
+        
+    def __str__(self):
+        """Provides summary of all properties."""
+        
+        user_input = (f'bf_cp = {self.bf_cp:.2f},' +
+                      f'tf_cp = {self.tf_cp:.2f},' +
+                      f'bf = {self.bf:.2f}, ' +
+                      f'tf = {self.tf:.2f}, ' +
+                      f't_stem = {self.t_stem:.2f}, ' +
+                      f'd_stem = {self.d_stem:.2f} \n\n')
+        
+        all_props = super().__str__()
+        
+        return user_input + all_props
+    
 class RectSP(SP):
-    pass
+    def __init__(self, b, t, b_cp = 0.0, t_cp = 0.0):
+        
+        self.b_cp = b_cp
+        self.t_cp = t_cp
+        self.b = b
+        self.t = t
+        
+        self.pts = []
+        self.calc_points()
+        
+        SP.__init__(self, self.pts)
+        
+    def calc_points(self):
+        
+        d1 = self.b_cp/2. - self.b/2.
+        d2 = self.t + self.t_cp
+        d3 = self.b_cp/2. + self.b/2.
+        
+        self.pts.append((d1, 0.))
+        self.pts.append((d1, self.t))
+        self.pts.append((0., self.t))
+        self.pts.append((0., d2))
+        self.pts.append((self.b_cp, d2))
+        self.pts.append((self.b_cp, self.t))
+        self.pts.append((d3, self.t))
+        self.pts.append((d3, 0.))
+        
+    def __str__(self):
+        """Provides summary of all properties."""
+        
+        user_input = (f'b_cp = {self.b_cp:.2f},' +
+                      f't_cp = {self.t_cp:.2f},' +
+                      f'b = {self.b:.2f}, ' +
+                      f't = {self.t:.2f} \n\n')
+        
+        all_props = super().__str__()
+        
+        return user_input + all_props
+    
+class Box(SP):
+    
+    def __init__(self, bf_top, tf_top, t_web, d_web, bf_bott = None, 
+                 tf_bott = None, bf_top_cp = 0.0, tf_top_cp = 0.0,
+                 bf_bott_cp = 0.0, tf_bott_cp = 0.0):
+        
+        self.bf_top = bf_top
+        self.tf_top = tf_top
+        self.t_web = t_web
+        self.d_web = d_web
+        self.bf_bott = bf_bott
+        self.tf_bott = tf_bott
+        
+        self.bf_top_cp = bf_top_cp
+        self.tf_top_cp = tf_top_cp
+        self.bf_bott_cp = bf_bott_cp
+        self.tf_bott_cp = tf_bott_cp
+        
+        self.pts = []
+        self.calc_points()
+        
+        SP.__init__(self, self.pts)
+        
+        
+    @property
+    def bf_bott(self):
+        return self.__bf_bott
+    
+    @bf_bott.setter
+    def bf_bott(self, bf_bott):
+        if bf_bott == None:
+            self.__bf_bott = self.bf_top
+        else:
+            self.__bf_bott = bf_bott
+
+    @property
+    def tf_bott(self):
+        return self.__tf_bott
+    
+    @tf_bott.setter
+    def tf_bott(self, tf_bott):
+        if tf_bott == None:
+            self.__tf_bott = self.tf_top
+        else:
+            self.__tf_bott = tf_bott
+        
+        
+    def calc_points(self):
+        
+        if self.bf_top_cp >= self.bf_bott_cp:
+            
+            d1 = self.bf_top_cp/2. - self.bf_bott_cp/2.
+            d2 = self.bf_top_cp/2. - self.bf_bott/2.
+            d3 = self.bf_top_cp/2. - self.bf_bott/2. + self.t_web
+            d4 = self.tf_bott_cp + self.tf_bott
+            d5 = self.bf_top_cp/2. + self.bf_bott/2. - self.t_web
+            d6 = d4 + self.d_web
+            d7 = d6 + self.tf_top
+            d8 = d7 + self.tf_top_cp
+            d9 = self.bf_top_cp/2. + self.bf_bott/2.
+            d10 = self.bf_top_cp/2. + self.bf_bott_cp/2.
+            
+            self.pts.append((d1, 0.))
+            self.pts.append((d1, self.tf_bott_cp))
+            self.pts.append((d2, self.tf_bott_cp))
+            self.pts.append((d3, d4))
+            self.pts.append((d5, d4))
+            self.pts.append((d5, d6))
+            self.pts.append((d3, d6))
+            self.pts.append((d3, d4))
+            self.pts.append((d2, self.tf_bott_cp))
+            self.pts.append((d2, d7))
+            self.pts.append((0., d7))
+            self.pts.append((0., d8))
+            self.pts.append((self.bf_top_cp, d8))
+            self.pts.append((self.bf_top_cp, d7))
+            self.pts.append((d9, d7))
+            self.pts.append((d9, self.tf_bott_cp))
+            self.pts.append((d10, self.tf_bott_cp))
+            
+        elif self.bf_top_cp < self.bf_bott_cp:
+            print("Not defined.")
+            
+    def __str__(self):
+        """Provides summary of all properties."""
+        
+        user_input = (f'bf_top_cp = {self.bf_top_cp:.2f}, ' +
+                      f'tf_top_cp = {self.tf_top_cp:.2f}, ' +
+                      f'bf_top = {self.bf_top:.2f}, ' +
+                      f'tf_top = {self.tf_top:.2f}, ' +
+                      f't_web = {self.t_web:.2f}, ' +
+                      f'd_web = {self.d_web:.2f}, ' +
+                      f'bf_bott = {self.bf_bott:.2f}, ' +
+                      f'tf_bott = {self.tf_bott:.2f}, ' +
+                      f'bf_bott_cp = {self.bf_bott_cp:.2f}, ' +
+                      f'tf_bott_cp = {self.tf_bott_cp:.2f} \n\n')
+        
+        all_props = super().__str__()
+        
+        return user_input + all_props
+        
+class ISP_AREMA(ISP):
+    
+    def __init__(self, bf_top, tf_top, t_web, d_web, 
+                 bf_bott=None, tf_bott=None,
+                 bf_top_cp=0.0, tf_top_cp=0.0, 
+                 bf_bott_cp=0.0, tf_bott_cp=0.0):
+        
+        self.bf_top = bf_top
+        self.tf_top = tf_top
+        self.t_web = t_web
+        self.d_web = d_web
+        self.bf_bott = bf_bott
+        self.tf_bott = tf_bott
+        
+        self.bf_top_cp = bf_top_cp
+        self.tf_top_cp = tf_top_cp
+        self.bf_bott_cp = bf_bott_cp
+        self.tf_bott_cp = tf_bott_cp
+        
+        ISP.__init__(self, self.bf_top, self.tf_top, self.t_web, self.d_web,
+                     self.bf_bott, self.tf_bott, 
+                     self.bf_top_cp, self.tf_top_cp,
+                     self.bf_bott_cp, self.tf_bott_cp)
+        
+        self.tsp_top = TSP(self.bf_top, self.tf_top, self.t_web, self.d_web,
+                       self.bf_top_cp, self.tf_top_cp)
+        self.tf_pl_top = RectSP(self.bf_top, self.tf_top, 
+                         self.bf_top_cp, self.tf_top_cp)
+        
+        self.tsp_bott = TSP(self.bf_bott, self.tf_bott, self.t_web, self.d_web,
+                       self.bf_bott_cp, self.tf_bott_cp)
+        self.tf_pl_bott = RectSP(self.bf_bott, self.tf_bott, 
+                         self.bf_bott_cp, self.tf_bott_cp)
+        
+        self.ryc_top = self.tsp_top.ry
+        self.afc_top = self.tf_pl_top.area
+        self.ryc_bott = self.tsp_bott.ry
+        self.afc_bott = self.tf_pl_bott.area
+        self.aw = self.t_web * self.d_web
+        
+#    covered by ISP parent class
+#    def __str__(self):
+#        """Provides summary of all properties."""
+        
+    
+class Box_AREMA(Box):
+    
+    def __init__(self, bf_top, tf_top, t_web, d_web, bf_bott = None, 
+                 tf_bott = None, bf_top_cp = 0.0, tf_top_cp = 0.0,
+                 bf_bott_cp = 0.0, tf_bott_cp = 0.0):
+        
+        self.bf_top = bf_top
+        self.tf_top = tf_top
+        self.t_web = t_web
+        self.d_web = d_web
+        self.bf_bott = bf_bott
+        self.tf_bott = tf_bott
+        
+        self.bf_top_cp = bf_top_cp
+        self.tf_top_cp = tf_top_cp
+        self.bf_bott_cp = bf_bott_cp
+        self.tf_bott_cp = tf_bott_cp
+        
+        Box.__init__(self, self.bf_top, self.tf_top, self.t_web, self.d_web,
+             self.bf_bott, self.tf_bott, self.bf_top_cp, self.tf_top_cp,
+             self.bf_bott_cp, self.tf_bott_cp)
+        
+        self.sum_st = self.calc_sum_st()
+        self.enclosed_area = self.calc_enclosed_area()
+        self.aw = 2*self.t_web*self.d_web
+        
+    def calc_sum_st(self):
+        bf_top_avg = (self.bf_top_cp + self.bf_top)/2
+        tf_top = self.tf_top_cp + self.tf_top
+        bf_bott_avg = (self.bf_bott_cp + self.bf_bott)/2
+        tf_bott = self.tf_bott_cp + self.tf_bott
+        
+        r1 = bf_top_avg/tf_top
+        r2 = self.d_web/self.t_web
+        r3 = bf_bott_avg/tf_bott
+        
+        return r1 + 2*r2 + r3
+    
+    def calc_enclosed_area(self):
+        #assumes the box is rectangular
+        top = self.bf_top - 2*self.t_web
+        side = self.d_web + self.tf_top/2. + self.tf_bott/2.
+        
+        return top*side
