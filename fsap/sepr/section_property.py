@@ -26,9 +26,6 @@ import matplotlib.pyplot as plt
 class SP:
     """
     Elastic section property class
-
-    User Notes:
-        1. All points must be located entirely within the first quadrant
     """
     def __init__(self, points):
         """Initialize section property class
@@ -36,8 +33,10 @@ class SP:
         Args:
             points (list of tuples or list of Point3D): coordinate points
                 representing the outline of the polygon
+                
         Returns:
             None
+            
         Notes:
         1. Points for a solid polygon must be entered in a clockwise direction.
         2. Points entereed for a void space must be entered in a
@@ -49,6 +48,7 @@ class SP:
         """
         self.points = []
         self.convert_to_points(points)
+        self.translate_to_q1()
         self.centroid = self.centroid()
         self.add_end_pt()
 
@@ -93,6 +93,17 @@ class SP:
         else:
             for pt in points:
                 self.points.append(Point3D(pt[0], pt[1]))
+                
+    def translate_to_q1(self):
+        """Moves shape to first quandrant."""
+        
+        if self.min_x < 0.0:
+            for pt in self.points:
+                pt.x = pt.x - self.min_x
+                
+        if self.min_y < 0.0:
+            for pt in self.points:
+                pt.y = pt.y - self.min_y
 
 
     def order_points(self):
