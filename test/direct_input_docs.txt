@@ -1,0 +1,30 @@
+
+
+
+
+(elem_type (str), 
+        const (1,2,3), 
+        nn (int), 
+        nelx (int), 
+        nm (int), 
+        nx (int), 
+        ns (int), 
+        nc (2D numpy array),
+        ecm (2D numpy array),
+        mp (2D numpy array),
+        sp (2D numpy array),
+        epm (2D numpy array),
+        epa (2D numpy array),
+        sm (2D numpy array),
+        njlc (int),
+        jlcm (2D numpy array),
+        ntlc (int),
+        tlcm (2D numpy array),
+        ndlc (int),
+        dlcm (2D numpy array),
+        ntrlc (int)
+        trlcm (2D numpy array),
+        blcm (2D numpy array),
+        wob (bool),
+        ofile (str))
+        
